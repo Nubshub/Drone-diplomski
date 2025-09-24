@@ -26,6 +26,20 @@
 i2c_master_bus_handle_t bus_handle;
 i2c_master_dev_handle_t dev_handle;
 
+static struct mpu6050_regs{
+    uint16_t accel_x;
+    uint16_t accel_y;
+    uint16_t accel_z;
+    uint16_t temp_raw;
+    uint16_t gyro_x;
+    uint16_t gyro_y;
+    uint16_t gyro_z;
+
+};
+
+static struct mpu6050_regs mpu6050_data;
+
+
 static void i2c_master_init(void)
 {
     i2c_master_bus_config_t i2c_mst_config = {
@@ -64,19 +78,21 @@ void vTaskTest1 (void * pvParametars)
         ESP_ERROR_CHECK(i2c_master_transmit_receive(dev_handle, &reg, 1, data, sizeof(data), -1));
 
         // Parse values (16-bit signed big-endian)
-        int16_t accel_x = (data[0] << 8) | data[1];
-        int16_t accel_y = (data[2] << 8) | data[3];
-        int16_t accel_z = (data[4] << 8) | data[5];
-        int16_t temp_raw = (data[6] << 8) | data[7];
-        int16_t gyro_x  = (data[8] << 8) | data[9];
-        int16_t gyro_y  = (data[10] << 8) | data[11];
-        int16_t gyro_z  = (data[12] << 8) | data[13];
+        mpu6050_data.accel_x = (data[0] << 8) | data[1];
+        mpu6050_data.accel_y = (data[2] << 8) | data[3];
+        mpu6050_data.accel_z = (data[4] << 8) | data[5];
+        mpu6050_data.temp_raw = (data[6] << 8) | data[7];
+        mpu6050_data.gyro_x  = (data[8] << 8) | data[9];
+        mpu6050_data.gyro_y  = (data[10] << 8) | data[11];
+        mpu6050_data.gyro_z  = (data[12] << 8) | data[13];
+        
 
-        float temp_c = (temp_raw / 340.0f) + 36.53f;
+        // float temp_c = (temp_raw / 340.0f) + 36.53f;
 
-        printf("Accel: X=%d Y=%d Z=%d | Gyro: X=%d Y=%d Z=%d | Temp=%.2f C",
-                 accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z, temp_c);
-        printf("\n");
+        printf("Accel: X=%d Y=%d Z=%d | Gyro: X=%d Y=%d Z=%d \n",
+                 mpu6050_data.accel_x, mpu6050_data.accel_y, mpu6050_data.accel_z, 
+                 mpu6050_data.gyro_x, mpu6050_data.gyro_y, mpu6050_data.gyro_z);
+
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
