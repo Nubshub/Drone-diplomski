@@ -25,10 +25,7 @@
 #define MPU6050_REG_ACCEL_XOUT_H    0x3B        /*!< MPU6050 register address of accelerometer X high byte */
 #define GPIO_INPUT_PIN              GPIO_NUM_4  /*!< GPIO pin for input from MPU6050 sensor*/
 
-i2c_master_bus_handle_t bus_handle;
-i2c_master_dev_handle_t dev_handle;
-
-static struct mpu6050_regs{
+typedef struct {
     int16_t accel_x;
     int16_t accel_y;
     int16_t accel_z;
@@ -37,12 +34,23 @@ static struct mpu6050_regs{
     int16_t gyro_y;
     int16_t gyro_z;
 
-};
+}mpu6050_regs;
 
-static struct mpu6050_regs mpu6050_data;
+static mpu6050_regs mpu6050_data;
 static TaskHandle_t mpu6050_task_handle = NULL;
 
-static void IRAM_ATTR gpio_isr_handler(void* arg)
+i2c_master_bus_handle_t bus_handle;
+i2c_master_dev_handle_t dev_handle;
+
+esp_err_t i2c_write_reg(i2c_master_dev_handle_t dev_handle, uint8_t reg_addr, uint8_t data)
+{
+    esp_err_t ret;
+    uint8_t msg[2] = { reg_addr, data };
+    ret = i2c_master_transmit(dev_handle, msg, sizeof(msg), -1);
+    return ret;
+}
+
+static void IRAM_ATTR mpu6050_isr_handler(void* arg)
 {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     vTaskNotifyGiveFromISR(mpu6050_task_handle, &xHigherPriorityTaskWoken);
@@ -65,13 +73,14 @@ static void gpio_init(void)
     ESP_ERROR_CHECK(gpio_install_isr_service(0));
 
     // Attach the interrupt service routine to the GPIO pin
-    ESP_ERROR_CHECK(gpio_isr_handler_add(GPIO_INPUT_PIN, gpio_isr_handler, NULL));
+    ESP_ERROR_CHECK(gpio_isr_handler_add(GPIO_INPUT_PIN, mpu6050_isr_handler, NULL));
     
     printf("GPIO init done!\n");
 }
 
 static void i2c_master_init(void)
 {
+    // Initialize I2C bus
     i2c_master_bus_config_t i2c_mst_config = {
         .clk_source = I2C_CLK_SRC_DEFAULT,
         .i2c_port = I2C_MASTER_NUM,
@@ -84,6 +93,7 @@ static void i2c_master_init(void)
     
     ESP_ERROR_CHECK(i2c_new_master_bus(&i2c_mst_config, &bus_handle));
 
+    // Add MPU6050 device to I2C bus
     i2c_device_config_t dev_cfg = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
         .device_address = I2C_MPU6050_ADDR,
@@ -95,12 +105,27 @@ static void i2c_master_init(void)
     printf("I2C init done!\n");
 }
 
+static void configure_mpu6050(void)
+{
+    // Wake up MPU6050
+    ESP_ERROR_CHECK(i2c_write_reg(dev_handle, 0x6B, 0x00));  // PWR_MGMT_1 = 0
+    printf("MPU6050 is started!\n");
 
-void vTaskTest1 (void * pvParametars)
+    // Set accelerometer to ±2g for max sensitivity
+    ESP_ERROR_CHECK(i2c_write_reg(dev_handle, 0x1C, 0x00));
+
+    // Motion interrupt
+    ESP_ERROR_CHECK(i2c_write_reg(dev_handle, 0x38, 0x40));  // enable motion interrupt
+    ESP_ERROR_CHECK(i2c_write_reg(dev_handle, 0x1F, 0x02));  // lower threshold → small motion
+    ESP_ERROR_CHECK(i2c_write_reg(dev_handle, 0x20, 0x01));  // short duration → fast trigger
+    ESP_ERROR_CHECK(i2c_write_reg(dev_handle, 0x37, 0x10));  // INT pin config
+}
+
+static void vTask_mpu6050 (void * pvParametars)
 {
     for(;;)
     {
-        printf("Enter task test 1\n");
+        printf("Enter vTask_mpu6050\n");
 
         // Wait for GPIO interrupt to notify the task
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
@@ -128,45 +153,22 @@ void vTaskTest1 (void * pvParametars)
     }
 }
 
-esp_err_t i2c_write_reg(i2c_master_dev_handle_t dev_handle, uint8_t reg_addr, uint8_t data)
-{
-    esp_err_t ret;
-    uint8_t msg[2] = { reg_addr, data };
-    ret = i2c_master_transmit(dev_handle, msg, sizeof(msg), -1);
-    return ret;
-}
-
-void configure_mpu6050(void)
-{
-    // Wake up MPU6050
-    ESP_ERROR_CHECK(i2c_write_reg(dev_handle, 0x6B, 0x00));  // PWR_MGMT_1 = 0
-    printf("MPU6050 is started!\n");
-
-    // Set accelerometer to ±2g for max sensitivity
-    ESP_ERROR_CHECK(i2c_write_reg(dev_handle, 0x1C, 0x00));
-
-    // Motion interrupt
-    ESP_ERROR_CHECK(i2c_write_reg(dev_handle, 0x38, 0x40));  // enable motion interrupt
-    ESP_ERROR_CHECK(i2c_write_reg(dev_handle, 0x1F, 0x02));  // lower threshold → small motion
-    ESP_ERROR_CHECK(i2c_write_reg(dev_handle, 0x20, 0x01));  // short duration → fast trigger
-    ESP_ERROR_CHECK(i2c_write_reg(dev_handle, 0x37, 0x10));  // INT pin config
-}
-
 void app_main(void)
 {
     BaseType_t xReturned;
     
     printf("Hello world from Milos!\n");
 
-
-    xReturned = xTaskCreate(vTaskTest1, "TaskTest1", 4096, NULL, 1, &mpu6050_task_handle);
+    xReturned = xTaskCreate(vTask_mpu6050, "vTask_mpu6050", 4096, NULL, 1, &mpu6050_task_handle);
     if(xReturned != pdPASS)
     {
         printf("Error: Failed to create task!\n");
     }
 
-    i2c_master_init();
     gpio_init();
+
+    i2c_master_init();
+    
     configure_mpu6050();  
 
     printf("End app_main.\n");
