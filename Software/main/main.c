@@ -109,23 +109,86 @@ static void vTask_mpu6050 (void * pvParametars)
     }
 }
 
+static void parse_crtp_packet(uint8_t *data, int len)
+{
+    if (len < 2) {
+        return; // Packet too short
+    }
+
+    uint8_t channel = data[0] & 0x0F; // Lower 4 bits for channel
+    uint8_t command = data[1];
+
+    printf("Received CRTP packet: Channel=%d, Command=0x%02X, Length=%d\n", channel, command, len);
+
+    // Further processing based on channel and command can be added here
+}
+
+static void vUdp_server(void * pvParametars)
+{
+    uint8_t rx_buffer[128];
+    struct sockaddr_in server_addr, client_addr;
+    socklen_t socklen = sizeof(client_addr);
+
+    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
+    if (sock < 0) {
+        ESP_LOGE("ESP32_UDP_AP", "Unable to create socket: errno %d", errno);
+        vTaskDelete(NULL);
+        return;
+    }
+
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(UDP_PORT);
+
+    if (bind(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+        ESP_LOGE("ESP32_UDP_AP", "Socket bind failed: errno %d", errno);
+        close(sock);
+        vTaskDelete(NULL);
+        return;
+    }
+
+    ESP_LOGI("ESP32_UDP_AP", "UDP server listening on port %d", UDP_PORT);
+
+    while (1) {
+        int len = recvfrom(sock, rx_buffer, sizeof(rx_buffer) - 1, 0,
+                           (struct sockaddr *)&client_addr, &socklen);
+        if (len < 0) {
+            ESP_LOGE("ESP32_UDP_AP", "recvfrom failed: errno %d", errno);
+            break;
+        } else if (len > 0) {
+            parse_crtp_packet(rx_buffer, len);
+        }
+    }
+
+    close(sock);
+    vTaskDelete(NULL);
+}
+
+
 void app_main(void)
 {
     BaseType_t xReturned;
     
-    printf("Hello world from Milos!\n");
-
     i2c_master_init();
     
     configure_mpu6050();  
 
     gpio_init();
 
+    wifi_init();
+
     xReturned = xTaskCreate(vTask_mpu6050, "vTask_mpu6050", 4096, NULL, 1, &mpu6050_task_handle);
     if(xReturned != pdPASS)
     {
-        printf("Error: Failed to create task!\n");
+        printf("Error: Failed to create vTask_mpu6050 task!\n");
     }
+
+    xReturned = xTaskCreate(vUdp_server, "vUdp_server", 4096, NULL, 5, NULL);
+    if(xReturned != pdPASS)
+    {
+        printf("Error: Failed to create  vUdp_server task!\n");
+    }
+
 
    
     printf("End app_main.\n");
