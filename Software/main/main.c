@@ -17,6 +17,7 @@
 #define GPIO_INPUT_PIN              GPIO_NUM_4  /*!< GPIO pin for input from MPU6050 sensor*/
 #define MPU6050_SENSITIVITY_2G      16384    /*!< MPU6050 sensitivity at ±2g full scale (LSB/g) */
 #define MPU6050_SENSITIVITY_250DPS   131     /*!< MPU6050 sensitivity at ±250°/s full scale (LSB/°/s) */
+#define MAX_THURST_VALUE            65535
 
 typedef struct {
     int16_t accel_x;
@@ -28,6 +29,16 @@ typedef struct {
     int16_t gyro_z;
 
 }mpu6050_regs;
+
+typedef struct __attribute__((packed)) {
+    uint8_t channel : 4;
+    uint8_t port : 4;
+    float roll;
+    float pitch;
+    float yaw;
+    uint16_t thrust;
+    uint8_t reserved;
+} crtp_packet_t;
 
 static mpu6050_regs mpu6050_data;
 static TaskHandle_t mpu6050_task_handle = NULL;
@@ -109,23 +120,22 @@ static void vTask_mpu6050 (void * pvParametars)
     }
 }
 
-static void parse_crtp_packet(uint8_t *data, int len)
+static void parse_crtp_packet(uint8_t *data, ssize_t len)
 {
     if (len < 2) {
         return; // Packet too short
     }
+    crtp_packet_t pkt;
+    memcpy(&pkt, data, sizeof(pkt));
 
-    uint8_t channel = data[0] & 0x0F; // Lower 4 bits for channel
-    uint8_t command = data[1];
+    ESP_LOGI("PARSE_CRTP", "Channel:%x, Port:%x, Roll:%.2f, Pitch:%.2f, Yaw:%.2f, Thrust:%d%%\n", 
+                            pkt.channel, pkt.port, pkt.roll, -pkt.pitch, pkt.yaw, pkt.thrust * 100 / MAX_THURST_VALUE);
 
-    printf("Received CRTP packet: Channel=%d, Command=0x%02X, Length=%d\n", channel, command, len);
-
-    // Further processing based on channel and command can be added here
 }
 
 static void vUdp_server(void * pvParametars)
 {
-    uint8_t rx_buffer[128];
+    uint8_t rx_buffer[1024];
     struct sockaddr_in server_addr, client_addr;
     socklen_t socklen = sizeof(client_addr);
 
@@ -156,6 +166,11 @@ static void vUdp_server(void * pvParametars)
             ESP_LOGE("ESP32_UDP_AP", "recvfrom failed: errno %d", errno);
             break;
         } else if (len > 0) {
+            rx_buffer[len] = '\0'; // Null-terminate the received data
+            ESP_LOGI("ESP32_UDP_AP", "Received %d bytes from %s:%d", 
+                    len, 
+                    inet_ntoa(client_addr.sin_addr), 
+                    ntohs(client_addr.sin_port));
             parse_crtp_packet(rx_buffer, len);
         }
     }
