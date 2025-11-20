@@ -11,13 +11,16 @@
 #include "freertos/task.h"
 #include "i2c_config.h"
 #include "wifi_config.h"
+#include "driver/ledc.h"
 
 
 #define MPU6050_REG_ACCEL_XOUT_H    0x3B        /*!< MPU6050 register address of accelerometer X high byte */
 #define GPIO_INPUT_PIN              GPIO_NUM_4  /*!< GPIO pin for input from MPU6050 sensor*/
-#define MPU6050_SENSITIVITY_2G      16384    /*!< MPU6050 sensitivity at ±2g full scale (LSB/g) */
-#define MPU6050_SENSITIVITY_250DPS   131     /*!< MPU6050 sensitivity at ±250°/s full scale (LSB/°/s) */
+#define MOTOR1_CONTROL_PIN          GPIO_NUM_16 /*!< GPIO pin for motor 1 control (thrust) */
+#define MPU6050_SENSITIVITY_2G      16384       /*!< MPU6050 sensitivity at ±2g full scale (LSB/g) */
+#define MPU6050_SENSITIVITY_250DPS   131        /*!< MPU6050 sensitivity at ±250°/s full scale (LSB/°/s) */
 #define MAX_THURST_VALUE            65535
+#define MAX_PWM_DUTY_CYCLE          1023        /*!< Maximum PWM duty cycle for 10-bit resolution */
 
 typedef struct {
     int16_t accel_x;
@@ -48,6 +51,50 @@ static void IRAM_ATTR mpu6050_isr_handler(void* arg)
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     vTaskNotifyGiveFromISR(mpu6050_task_handle, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+static void timer_config(void)
+{
+    ledc_timer_config_t ledc_timer = {
+        .speed_mode       = LEDC_HIGH_SPEED_MODE,
+        .timer_num        = LEDC_TIMER_0,
+        .duty_resolution  = LEDC_TIMER_10_BIT,
+        .freq_hz          = 50000,  // Set frequency to 50 kHz for motor control
+        .clk_cfg          = LEDC_AUTO_CLK
+    };
+
+    ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
+
+    printf("LEDC timer configured for motor control.\n");
+
+    ledc_channel_config_t ledc_channel = {
+        .speed_mode     = LEDC_HIGH_SPEED_MODE,
+        .channel        = LEDC_CHANNEL_0,
+        .timer_sel      = LEDC_TIMER_0,
+        .intr_type      = LEDC_INTR_DISABLE,
+        .gpio_num       = MOTOR1_CONTROL_PIN,
+        .duty           = 0, // Start with 0% duty cycle
+        .hpoint         = 0
+    };
+
+    ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
+
+    printf("LEDC channel configured for motor control.\n");
+
+
+}
+
+static void motor_control(uint16_t thrust)
+{
+    if (thrust > MAX_THURST_VALUE) {
+        thrust = MAX_THURST_VALUE;
+    }
+
+    // Map thrust (0 to MAX_THURST_VALUE) to duty cycle (0 to 1023 for 10-bit resolution)
+    uint32_t duty = ((uint32_t)thrust * MAX_PWM_DUTY_CYCLE) / MAX_THURST_VALUE;
+
+    ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, duty));
+    ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
 }
 
 static void gpio_init(void)
@@ -128,8 +175,11 @@ static void parse_crtp_packet(uint8_t *data, ssize_t len)
     crtp_packet_t pkt;
     memcpy(&pkt, data, sizeof(pkt));
 
-    ESP_LOGI("PARSE_CRTP", "Channel:%x, Port:%x, Roll:%.2f, Pitch:%.2f, Yaw:%.2f, Thrust:%d%%\n", 
-                            pkt.channel, pkt.port, pkt.roll, -pkt.pitch, pkt.yaw, pkt.thrust * 100 / MAX_THURST_VALUE);
+    motor_control(pkt.thrust);
+    printf("Motor thrust set to %d\n", pkt.thrust);
+
+    // ESP_LOGI("PARSE_CRTP", "Channel:%x, Port:%x, Roll:%.2f, Pitch:%.2f, Yaw:%.2f, Thrust:%d%%\n", 
+                            // pkt.channel, pkt.port, pkt.roll, -pkt.pitch, pkt.yaw, pkt.thrust * 100 / MAX_THURST_VALUE);
 
 }
 
@@ -167,10 +217,10 @@ static void vUdp_server(void * pvParametars)
             break;
         } else if (len > 0) {
             rx_buffer[len] = '\0'; // Null-terminate the received data
-            ESP_LOGI("ESP32_UDP_AP", "Received %d bytes from %s:%d", 
-                    len, 
-                    inet_ntoa(client_addr.sin_addr), 
-                    ntohs(client_addr.sin_port));
+            // ESP_LOGI("ESP32_UDP_AP", "Received %d bytes from %s:%d", 
+            //         len, 
+            //         inet_ntoa(client_addr.sin_addr), 
+            //         ntohs(client_addr.sin_port));
             parse_crtp_packet(rx_buffer, len);
         }
     }
@@ -189,6 +239,8 @@ void app_main(void)
     configure_mpu6050();  
 
     gpio_init();
+
+    timer_config();
 
     wifi_init();
 
