@@ -1,8 +1,19 @@
 MPU6050 -> ESP32
+
 VCC 	-> 3V3
 GND	-> GND
 SCL	-> GPIO22
 SDA	-> GPIO21
 
 
+DRV8833   -> ESP32 (Fast decay, xIN1 PWM, xIN2 0)
 
+AIN1(IN1) -> GPIO16 //motor 1
+AIN2(IN2) -> GND    //motor 1
+BIN1(IN3) -> GPIO17 //motor 2
+BIN2(IN4) -> GND    //motor 2
+
+AIN1(IN1) -> GPIO2  //motor 3
+AIN2(IN2) -> GND    //motor 3
+BIN1(IN3) -> GPIO4  //motor 4
+BIN2(IN4) -> GND    //motor 4
