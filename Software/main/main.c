@@ -19,8 +19,9 @@
 #define MOTOR1_CONTROL_PIN          GPIO_NUM_16 /*!< GPIO pin for motor 1 control (thrust) */
 #define MPU6050_SENSITIVITY_2G      16384       /*!< MPU6050 sensitivity at ±2g full scale (LSB/g) */
 #define MPU6050_SENSITIVITY_250DPS   131        /*!< MPU6050 sensitivity at ±250°/s full scale (LSB/°/s) */
-#define MAX_THURST_VALUE            65535
-#define MAX_PWM_DUTY_CYCLE          1023        /*!< Maximum PWM duty cycle for 10-bit resolution */
+#define MAX_THURST_VALUE            58500     /*!< Maximum thrust value for motor control is 65535 */
+// #define THURST_VALUE_90             58500      /*!< Maximum thrust value to avoid overloading motors */
+#define MAX_PWM_DUTY_CYCLE          8191        /*!< Maximum PWM duty cycle for 10-bit resolution */
 
 typedef struct {
     int16_t accel_x;
@@ -58,8 +59,8 @@ static void timer_config(void)
     ledc_timer_config_t ledc_timer = {
         .speed_mode       = LEDC_HIGH_SPEED_MODE,
         .timer_num        = LEDC_TIMER_0,
-        .duty_resolution  = LEDC_TIMER_10_BIT,
-        .freq_hz          = 50000,  // Set frequency to 50 kHz for motor control
+        .duty_resolution  = LEDC_TIMER_13_BIT,
+        .freq_hz          = 50,  // Set frequency to 50 kHz for motor control
         .clk_cfg          = LEDC_AUTO_CLK
     };
 
@@ -90,9 +91,10 @@ static void motor_control(uint16_t thrust)
         thrust = MAX_THURST_VALUE;
     }
 
-    // Map thrust (0 to MAX_THURST_VALUE) to duty cycle (0 to 1023 for 10-bit resolution)
+    // thrust = (thrust / THURST_VALUE_90) * MAX_THURST_VALUE;
+    // Map thrust (0 to MAX_THURST_VALUE) to duty cycle (0 to 8191 for 13-bit resolution)
     uint32_t duty = ((uint32_t)thrust * MAX_PWM_DUTY_CYCLE) / MAX_THURST_VALUE;
-
+    printf("Setting motor duty cycle to %ld for thrust %d\n", duty, thrust);
     ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, duty));
     ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
 }
