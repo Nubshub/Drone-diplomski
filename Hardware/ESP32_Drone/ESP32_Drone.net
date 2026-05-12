@@ -1,9 +1,9 @@
 (export
 	(version "E")
 	(design
-		(source "C:\\Users\\mnedeljk\\OneDrive - Qualcomm\\Documents\\KiCad\\ESP32_Drone\\ESP32_Drone.kicad_sch")
-		(date "2026-05-04T18:07:44")
-		(tool "Eeschema 10.0.0")
+		(source "C:\\Users\\milos\\Documents\\Drone-diplomski\\Hardware\\ESP32_Drone\\ESP32_Drone.kicad_sch")
+		(date "2026-05-12T21:02:13")
+		(tool "Eeschema 10.0.2")
 		(sheet
 			(number "1")
 			(name "/")
@@ -61,6 +61,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C15850")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -72,6 +74,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C15850")
 			)
 			(property
 				(name "Sheetname")
@@ -115,6 +121,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C1740")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -126,6 +134,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C1740")
 			)
 			(property
 				(name "Sheetname")
@@ -169,6 +181,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C1806")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -180,6 +194,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C1806")
 			)
 			(property
 				(name "Sheetname")
@@ -223,6 +241,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C49678")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -234,6 +254,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C49678")
 			)
 			(property
 				(name "Sheetname")
@@ -277,6 +301,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C1822")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -288,6 +314,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C1822")
 			)
 			(property
 				(name "Sheetname")
@@ -331,6 +361,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C49678")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -342,6 +374,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C49678")
 			)
 			(property
 				(name "Sheetname")
@@ -385,6 +421,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C1653")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -396,6 +434,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C1653")
 			)
 			(property
 				(name "Sheetname")
@@ -439,6 +481,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C49678")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -450,6 +494,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C49678")
 			)
 			(property
 				(name "Sheetname")
@@ -493,6 +541,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C49678")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -504,6 +554,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C49678")
 			)
 			(property
 				(name "Sheetname")
@@ -547,6 +601,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C45783")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -558,6 +614,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C45783")
 			)
 			(property
 				(name "Sheetname")
@@ -601,6 +661,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C49678")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -612,6 +674,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C49678")
 			)
 			(property
 				(name "Sheetname")
@@ -655,6 +721,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C15850")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -666,6 +734,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C15850")
 			)
 			(property
 				(name "Sheetname")
@@ -709,6 +781,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C49678")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -720,6 +794,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C49678")
 			)
 			(property
 				(name "Sheetname")
@@ -763,6 +841,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C49678")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -774,6 +854,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C49678")
 			)
 			(property
 				(name "Sheetname")
@@ -817,6 +901,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C49678")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -828,6 +914,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C49678")
 			)
 			(property
 				(name "Sheetname")
@@ -871,6 +961,8 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
+					(name "LCSC") "C49678")
+				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
 					(name "Datasheet")
@@ -882,6 +974,10 @@
 				(lib "Device")
 				(part "C")
 				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "LCSC")
+				(value "C49678")
 			)
 			(property
 				(name "Sheetname")
@@ -926,6 +1022,8 @@
 			(description "40V 3A Schottky Diode, SMA")
 			(fields
 				(field
+					(name "LCSC") "C8599")
+				(field
 					(name "Footprint") "Diode_SMD:D_SMB")
 				(field
 					(name "Datasheet") "https://www.vishay.com/docs/88751/ss32.pdf")
@@ -936,6 +1034,10 @@
 				(lib "Diode")
 				(part "SS34")
 				(description "40V 3A Schottky Diode, SMA")
+			)
+			(property
+				(name "LCSC")
+				(value "C8599")
 			)
 			(property
 				(name "Sheetname")
@@ -981,6 +1083,8 @@
 				(field
 					(name "Sim.Pins") "1=K 2=A")
 				(field
+					(name "LCSC") "C2286")
+				(field
 					(name "Footprint") "LED_SMD:LED_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -996,6 +1100,10 @@
 			(property
 				(name "Sim.Pins")
 				(value "1=K 2=A")
+			)
+			(property
+				(name "LCSC")
+				(value "C2286")
 			)
 			(property
 				(name "Sheetname")
@@ -1041,6 +1149,8 @@
 				(field
 					(name "Sim.Pins") "1=K 2=A")
 				(field
+					(name "LCSC") "C2297")
+				(field
 					(name "Footprint") "LED_SMD:LED_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -1056,6 +1166,10 @@
 			(property
 				(name "Sim.Pins")
 				(value "1=K 2=A")
+			)
+			(property
+				(name "LCSC")
+				(value "C2297")
 			)
 			(property
 				(name "Sheetname")
@@ -1100,6 +1214,8 @@
 			(description "40V 2A Schottky Diode, SMA")
 			(fields
 				(field
+					(name "LCSC") "C8598")
+				(field
 					(name "Footprint") "Diode_SMD:D_SMA")
 				(field
 					(name "Datasheet") "https://www.vishay.com/docs/88748/ss22.pdf")
@@ -1110,6 +1226,10 @@
 				(lib "Diode")
 				(part "SS24")
 				(description "40V 2A Schottky Diode, SMA")
+			)
+			(property
+				(name "LCSC")
+				(value "C8598")
 			)
 			(property
 				(name "Sheetname")
@@ -1154,6 +1274,8 @@
 			(description "40V 2A Schottky Diode, SMA")
 			(fields
 				(field
+					(name "LCSC") "C8598")
+				(field
 					(name "Footprint") "Diode_SMD:D_SMA")
 				(field
 					(name "Datasheet") "https://www.vishay.com/docs/88748/ss22.pdf")
@@ -1164,6 +1286,10 @@
 				(lib "Diode")
 				(part "SS24")
 				(description "40V 2A Schottky Diode, SMA")
+			)
+			(property
+				(name "LCSC")
+				(value "C8598")
 			)
 			(property
 				(name "Sheetname")
@@ -1208,6 +1334,8 @@
 			(description "40V 2A Schottky Diode, SMA")
 			(fields
 				(field
+					(name "LCSC") "C8598")
+				(field
 					(name "Footprint") "Diode_SMD:D_SMA")
 				(field
 					(name "Datasheet") "https://www.vishay.com/docs/88748/ss22.pdf")
@@ -1218,6 +1346,10 @@
 				(lib "Diode")
 				(part "SS24")
 				(description "40V 2A Schottky Diode, SMA")
+			)
+			(property
+				(name "LCSC")
+				(value "C8598")
 			)
 			(property
 				(name "Sheetname")
@@ -1262,6 +1394,8 @@
 			(description "40V 2A Schottky Diode, SMA")
 			(fields
 				(field
+					(name "LCSC") "C8598")
+				(field
 					(name "Footprint") "Diode_SMD:D_SMA")
 				(field
 					(name "Datasheet") "https://www.vishay.com/docs/88748/ss22.pdf")
@@ -1272,6 +1406,10 @@
 				(lib "Diode")
 				(part "SS24")
 				(description "40V 2A Schottky Diode, SMA")
+			)
+			(property
+				(name "LCSC")
+				(value "C8598")
 			)
 			(property
 				(name "Sheetname")
@@ -1316,6 +1454,8 @@
 			(description "USB 2.0-only 16P Type-C Receptacle connector")
 			(fields
 				(field
+					(name "LCSC") "C165948")
+				(field
 					(name "Footprint") "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12")
 				(field
 					(name "Datasheet") "https://www.usb.org/sites/default/files/documents/usb_type-c.zip")
@@ -1326,6 +1466,10 @@
 				(lib "Connector")
 				(part "USB_C_Receptacle_USB2.0_16P")
 				(description "USB 2.0-only 16P Type-C Receptacle connector")
+			)
+			(property
+				(name "LCSC")
+				(value "C165948")
 			)
 			(property
 				(name "Sheetname")
@@ -1414,6 +1558,8 @@
 			(description "Generic connector, single row, 01x02, script generated")
 			(fields
 				(field
+					(name "LCSC") "C166021")
+				(field
 					(name "Footprint") "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal")
 				(field
 					(name "Datasheet")
@@ -1425,6 +1571,10 @@
 				(lib "Connector")
 				(part "Conn_01x02_Socket")
 				(description "Generic connector, single row, 01x02, script generated")
+			)
+			(property
+				(name "LCSC")
+				(value "C166021")
 			)
 			(property
 				(name "Sheetname")
@@ -1685,6 +1835,8 @@
 			(description "-4.0A Id, -30V Vds, P-Channel MOSFET, SOT-23")
 			(fields
 				(field
+					(name "LCSC") "C15127")
+				(field
 					(name "Footprint") "Package_TO_SOT_SMD:SOT-23")
 				(field
 					(name "Datasheet") "http://www.aosmd.com/pdfs/datasheet/AO3401A.pdf")
@@ -1695,6 +1847,10 @@
 				(lib "Transistor_FET")
 				(part "AO3401A")
 				(description "-4.0A Id, -30V Vds, P-Channel MOSFET, SOT-23")
+			)
+			(property
+				(name "LCSC")
+				(value "C15127")
 			)
 			(property
 				(name "Sheetname")
@@ -1746,6 +1902,8 @@
 				(field
 					(name "Sim.Pins") "1=B 2=E 3=C")
 				(field
+					(name "LCSC") "C181090")
+				(field
 					(name "Footprint") "Package_TO_SOT_SMD:SOT-23")
 				(field
 					(name "Datasheet") "http://www.secosgmbh.com/datasheet/products/SSMPTransistor/SOT-23/SS8050.pdf")
@@ -1764,6 +1922,10 @@
 			(property
 				(name "Sim.Pins")
 				(value "1=B 2=E 3=C")
+			)
+			(property
+				(name "LCSC")
+				(value "C181090")
 			)
 			(property
 				(name "Sheetname")
@@ -1815,6 +1977,8 @@
 				(field
 					(name "Sim.Pins") "1=B 2=E 3=C")
 				(field
+					(name "LCSC") "C181090")
+				(field
 					(name "Footprint") "Package_TO_SOT_SMD:SOT-23")
 				(field
 					(name "Datasheet") "http://www.secosgmbh.com/datasheet/products/SSMPTransistor/SOT-23/SS8050.pdf")
@@ -1833,6 +1997,10 @@
 			(property
 				(name "Sim.Pins")
 				(value "1=B 2=E 3=C")
+			)
+			(property
+				(name "LCSC")
+				(value "C181090")
 			)
 			(property
 				(name "Sheetname")
@@ -1880,6 +2048,8 @@
 			(description "30V Vds, 5.7A Id, N-Channel MOSFET, SOT-23")
 			(fields
 				(field
+					(name "LCSC") "C20917")
+				(field
 					(name "Footprint") "Package_TO_SOT_SMD:SOT-23")
 				(field
 					(name "Datasheet") "http://www.aosmd.com/pdfs/datasheet/AO3400A.pdf")
@@ -1890,6 +2060,10 @@
 				(lib "Transistor_FET")
 				(part "AO3400A")
 				(description "30V Vds, 5.7A Id, N-Channel MOSFET, SOT-23")
+			)
+			(property
+				(name "LCSC")
+				(value "C20917")
 			)
 			(property
 				(name "Sheetname")
@@ -1937,6 +2111,8 @@
 			(description "30V Vds, 5.7A Id, N-Channel MOSFET, SOT-23")
 			(fields
 				(field
+					(name "LCSC") "C20917")
+				(field
 					(name "Footprint") "Package_TO_SOT_SMD:SOT-23")
 				(field
 					(name "Datasheet") "http://www.aosmd.com/pdfs/datasheet/AO3400A.pdf")
@@ -1947,6 +2123,10 @@
 				(lib "Transistor_FET")
 				(part "AO3400A")
 				(description "30V Vds, 5.7A Id, N-Channel MOSFET, SOT-23")
+			)
+			(property
+				(name "LCSC")
+				(value "C20917")
 			)
 			(property
 				(name "Sheetname")
@@ -1994,6 +2174,8 @@
 			(description "30V Vds, 5.7A Id, N-Channel MOSFET, SOT-23")
 			(fields
 				(field
+					(name "LCSC") "C20917")
+				(field
 					(name "Footprint") "Package_TO_SOT_SMD:SOT-23")
 				(field
 					(name "Datasheet") "http://www.aosmd.com/pdfs/datasheet/AO3400A.pdf")
@@ -2004,6 +2186,10 @@
 				(lib "Transistor_FET")
 				(part "AO3400A")
 				(description "30V Vds, 5.7A Id, N-Channel MOSFET, SOT-23")
+			)
+			(property
+				(name "LCSC")
+				(value "C20917")
 			)
 			(property
 				(name "Sheetname")
@@ -2051,6 +2237,8 @@
 			(description "30V Vds, 5.7A Id, N-Channel MOSFET, SOT-23")
 			(fields
 				(field
+					(name "LCSC") "C20917")
+				(field
 					(name "Footprint") "Package_TO_SOT_SMD:SOT-23")
 				(field
 					(name "Datasheet") "http://www.aosmd.com/pdfs/datasheet/AO3400A.pdf")
@@ -2061,6 +2249,10 @@
 				(lib "Transistor_FET")
 				(part "AO3400A")
 				(description "30V Vds, 5.7A Id, N-Channel MOSFET, SOT-23")
+			)
+			(property
+				(name "LCSC")
+				(value "C20917")
 			)
 			(property
 				(name "Sheetname")
@@ -2107,6 +2299,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C25803")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2118,6 +2312,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25803")
 			)
 			(property
 				(name "Sheetname")
@@ -2161,6 +2359,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C25803")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2172,6 +2372,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25803")
 			)
 			(property
 				(name "Sheetname")
@@ -2215,6 +2419,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C25803")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2226,6 +2432,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25803")
 			)
 			(property
 				(name "Sheetname")
@@ -2269,6 +2479,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C25803")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2280,6 +2492,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25803")
 			)
 			(property
 				(name "Sheetname")
@@ -2323,6 +2539,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C22706")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2334,6 +2552,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C22706")
 			)
 			(property
 				(name "Sheetname")
@@ -2372,10 +2594,12 @@
 		)
 		(comp
 			(ref "R8")
-			(value "22.1k")
+			(value "22k")
 			(footprint "Resistor_SMD:R_0603_1608Metric")
 			(description "Resistor")
 			(fields
+				(field
+					(name "LCSC") "C25879")
 				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
@@ -2388,6 +2612,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25879")
 			)
 			(property
 				(name "Sheetname")
@@ -2426,10 +2654,12 @@
 		)
 		(comp
 			(ref "R9")
-			(value "47.5k")
+			(value "47k")
 			(footprint "Resistor_SMD:R_0603_1608Metric")
 			(description "Resistor")
 			(fields
+				(field
+					(name "LCSC") "C25819")
 				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
@@ -2442,6 +2672,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25819")
 			)
 			(property
 				(name "Sheetname")
@@ -2485,6 +2719,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C21189")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2496,6 +2732,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C21189")
 			)
 			(property
 				(name "Sheetname")
@@ -2539,6 +2779,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C21189")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2550,6 +2792,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C21189")
 			)
 			(property
 				(name "Sheetname")
@@ -2593,6 +2839,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C25804")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2604,6 +2852,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25804")
 			)
 			(property
 				(name "Sheetname")
@@ -2647,6 +2899,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C25804")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2658,6 +2912,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25804")
 			)
 			(property
 				(name "Sheetname")
@@ -2701,6 +2959,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C4184")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2712,6 +2972,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C4184")
 			)
 			(property
 				(name "Sheetname")
@@ -2755,6 +3019,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C4184")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2766,6 +3032,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C4184")
 			)
 			(property
 				(name "Sheetname")
@@ -2809,6 +3079,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C25804")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2820,6 +3092,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25804")
 			)
 			(property
 				(name "Sheetname")
@@ -2863,6 +3139,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C22978")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2874,6 +3152,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C22978")
 			)
 			(property
 				(name "Sheetname")
@@ -2917,6 +3199,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C4182")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2928,6 +3212,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C4182")
 			)
 			(property
 				(name "Sheetname")
@@ -2971,6 +3259,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C4182")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -2982,6 +3272,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C4182")
 			)
 			(property
 				(name "Sheetname")
@@ -3025,6 +3319,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C21190")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -3036,6 +3332,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C21190")
 			)
 			(property
 				(name "Sheetname")
@@ -3079,6 +3379,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C25804")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -3090,6 +3392,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25804")
 			)
 			(property
 				(name "Sheetname")
@@ -3133,6 +3439,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C21190")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -3144,6 +3452,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C21190")
 			)
 			(property
 				(name "Sheetname")
@@ -3187,6 +3499,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C25804")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -3198,6 +3512,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25804")
 			)
 			(property
 				(name "Sheetname")
@@ -3241,6 +3559,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C21190")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -3252,6 +3572,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C21190")
 			)
 			(property
 				(name "Sheetname")
@@ -3295,6 +3619,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C25804")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -3306,6 +3632,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25804")
 			)
 			(property
 				(name "Sheetname")
@@ -3349,6 +3679,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C21190")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -3360,6 +3692,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C21190")
 			)
 			(property
 				(name "Sheetname")
@@ -3403,6 +3739,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C25804")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -3414,6 +3752,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25804")
 			)
 			(property
 				(name "Sheetname")
@@ -3457,6 +3799,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C25804")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -3468,6 +3812,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25804")
 			)
 			(property
 				(name "Sheetname")
@@ -3511,6 +3859,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C25804")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -3522,6 +3872,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C25804")
 			)
 			(property
 				(name "Sheetname")
@@ -3565,6 +3919,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C23186")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -3576,6 +3932,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C23186")
 			)
 			(property
 				(name "Sheetname")
@@ -3619,6 +3979,8 @@
 			(description "Resistor")
 			(fields
 				(field
+					(name "LCSC") "C23186")
+				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
 					(name "Datasheet")
@@ -3630,6 +3992,10 @@
 				(lib "Device")
 				(part "R")
 				(description "Resistor")
+			)
+			(property
+				(name "LCSC")
+				(value "C23186")
 			)
 			(property
 				(name "Sheetname")
@@ -3673,6 +4039,8 @@
 			(description "Switch, single pole double throw")
 			(fields
 				(field
+					(name "LCSC") "JS102011SAQN")
+				(field
 					(name "Footprint") "Button_Switch_SMD:SW_SPDT_CK_JS102011SAQN")
 				(field
 					(name "Datasheet")
@@ -3684,6 +4052,10 @@
 				(lib "Switch")
 				(part "SW_SPDT")
 				(description "Switch, single pole double throw")
+			)
+			(property
+				(name "LCSC")
+				(value "JS102011SAQN")
 			)
 			(property
 				(name "Sheetname")
@@ -3727,6 +4099,8 @@
 			(description "500mA low dropout linear regulator, fixed 3.3V output, SOT-23-5")
 			(fields
 				(field
+					(name "LCSC") "C89366")
+				(field
 					(name "Footprint") "Package_TO_SOT_SMD:SOT-23-5")
 				(field
 					(name "Datasheet") "http://ww1.microchip.com/downloads/en/DeviceDoc/MIC5219-500mA-Peak-Output-LDO-Regulator-DS20006021A.pdf")
@@ -3737,6 +4111,10 @@
 				(lib "Regulator_Linear")
 				(part "MIC5219-3.3YM5")
 				(description "500mA low dropout linear regulator, fixed 3.3V output, SOT-23-5")
+			)
+			(property
+				(name "LCSC")
+				(value "C89366")
 			)
 			(property
 				(name "Sheetname")
@@ -3790,6 +4168,8 @@
 			(description "USB to UART master bridge, QFN-28")
 			(fields
 				(field
+					(name "LCSC") "C2652470")
+				(field
 					(name "Footprint") "Package_DFN_QFN:QFN-28-1EP_5x5mm_P0.5mm_EP3.35x3.35mm")
 				(field
 					(name "Datasheet") "https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf")
@@ -3800,6 +4180,10 @@
 				(lib "Interface_USB")
 				(part "CP2102N-Axx-xQFN28")
 				(description "USB to UART master bridge, QFN-28")
+			)
+			(property
+				(name "LCSC")
+				(value "C2652470")
 			)
 			(property
 				(name "Sheetname")
@@ -3925,6 +4309,8 @@
 			(description "InvenSense 6-Axis Motion Sensor, Gyroscope, Accelerometer, I2C")
 			(fields
 				(field
+					(name "LCSC") "C24112")
+				(field
 					(name "Footprint") "Sensor_Motion:InvenSense_QFN-24_4x4mm_P0.5mm")
 				(field
 					(name "Datasheet") "https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf")
@@ -3935,6 +4321,10 @@
 				(lib "Sensor_Motion")
 				(part "MPU-6050")
 				(description "InvenSense 6-Axis Motion Sensor, Gyroscope, Accelerometer, I2C")
+			)
+			(property
+				(name "LCSC")
+				(value "C24112")
 			)
 			(property
 				(name "Sheetname")
@@ -4045,6 +4435,8 @@
 			(description "RF Module, ESP32-D0WD SoC, Wi-Fi 802.11b/g/n, Bluetooth, BLE, 32-bit, 2.7-3.6V, onboard antenna, SMD")
 			(fields
 				(field
+					(name "LCSC") "C473012")
+				(field
 					(name "Footprint") "RF_Module:ESP32-WROOM-32D")
 				(field
 					(name "Datasheet") "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32d_esp32-wroom-32u_datasheet_en.pdf")
@@ -4055,6 +4447,10 @@
 				(lib "RF_Module")
 				(part "ESP32-WROOM-32D")
 				(description "RF Module, ESP32-D0WD SoC, Wi-Fi 802.11b/g/n, Bluetooth, BLE, 32-bit, 2.7-3.6V, onboard antenna, SMD")
+			)
+			(property
+				(name "LCSC")
+				(value "C473012")
 			)
 			(property
 				(name "Sheetname")
@@ -4210,6 +4606,8 @@
 			(description "1A Standalone Linear Li-ion/LiPo single-cell battery charger, 4.2V ±1% charge voltage, VCC = 4.0..8.0V, SOIC-8 (SOP-8)")
 			(fields
 				(field
+					(name "LCSC") "C16581")
+				(field
 					(name "Footprint") "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm_ThermalVias")
 				(field
 					(name "Datasheet") "https://www.lcsc.com/datasheet/lcsc_datasheet_2410121619_TOPPOWER-Nanjing-Extension-Microelectronics-TP4056-42-ESOP8_C16581.pdf")
@@ -4220,6 +4618,10 @@
 				(lib "Battery_Management")
 				(part "TP4056-42-ESOP8")
 				(description "1A Standalone Linear Li-ion/LiPo single-cell battery charger, 4.2V ±1% charge voltage, VCC = 4.0..8.0V, SOIC-8 (SOP-8)")
+			)
+			(property
+				(name "LCSC")
+				(value "C16581")
 			)
 			(property
 				(name "Sheetname")
