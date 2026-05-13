@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "C:\\Users\\milos\\Documents\\Drone-diplomski\\Hardware\\ESP32_Drone\\ESP32_Drone.kicad_sch")
-		(date "2026-05-12T21:02:13")
+		(date "2026-05-13T23:41:03")
 		(tool "Eeschema 10.0.2")
 		(sheet
 			(number "1")
@@ -421,7 +421,7 @@
 			(description "Unpolarized capacitor")
 			(fields
 				(field
-					(name "LCSC") "C1653")
+					(name "LCSC") "C107146 ")
 				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric")
 				(field
@@ -437,7 +437,7 @@
 			)
 			(property
 				(name "LCSC")
-				(value "C1653")
+				(value "C107146 ")
 			)
 			(property
 				(name "Sheetname")
@@ -1149,7 +1149,7 @@
 				(field
 					(name "Sim.Pins") "1=K 2=A")
 				(field
-					(name "LCSC") "C2297")
+					(name "LCSC") "C1002")
 				(field
 					(name "Footprint") "LED_SMD:LED_0603_1608Metric")
 				(field
@@ -1169,7 +1169,7 @@
 			)
 			(property
 				(name "LCSC")
-				(value "C2297")
+				(value "C1002")
 			)
 			(property
 				(name "Sheetname")
@@ -1558,7 +1558,7 @@
 			(description "Generic connector, single row, 01x02, script generated")
 			(fields
 				(field
-					(name "LCSC") "C166021")
+					(name "LCSC") "C173752")
 				(field
 					(name "Footprint") "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal")
 				(field
@@ -1574,7 +1574,7 @@
 			)
 			(property
 				(name "LCSC")
-				(value "C166021")
+				(value "C173752")
 			)
 			(property
 				(name "Sheetname")
@@ -2534,7 +2534,7 @@
 		)
 		(comp
 			(ref "R7")
-			(value "2k")
+			(value "1k")
 			(footprint "Resistor_SMD:R_0603_1608Metric")
 			(description "Resistor")
 			(fields
@@ -2599,7 +2599,7 @@
 			(description "Resistor")
 			(fields
 				(field
-					(name "LCSC") "C25879")
+					(name "LCSC") "C23344")
 				(field
 					(name "Footprint") "Resistor_SMD:R_0603_1608Metric")
 				(field
@@ -2615,7 +2615,7 @@
 			)
 			(property
 				(name "LCSC")
-				(value "C25879")
+				(value "C23344")
 			)
 			(property
 				(name "Sheetname")
@@ -4039,7 +4039,7 @@
 			(description "Switch, single pole double throw")
 			(fields
 				(field
-					(name "LCSC") "JS102011SAQN")
+					(name "LCSC") "C221660 ")
 				(field
 					(name "Footprint") "Button_Switch_SMD:SW_SPDT_CK_JS102011SAQN")
 				(field
@@ -4055,7 +4055,7 @@
 			)
 			(property
 				(name "LCSC")
-				(value "JS102011SAQN")
+				(value "C221660 ")
 			)
 			(property
 				(name "Sheetname")
@@ -4099,7 +4099,7 @@
 			(description "500mA low dropout linear regulator, fixed 3.3V output, SOT-23-5")
 			(fields
 				(field
-					(name "LCSC") "C89366")
+					(name "LCSC") "C29613 ")
 				(field
 					(name "Footprint") "Package_TO_SOT_SMD:SOT-23-5")
 				(field
@@ -4114,7 +4114,7 @@
 			)
 			(property
 				(name "LCSC")
-				(value "C89366")
+				(value "C29613 ")
 			)
 			(property
 				(name "Sheetname")
@@ -5848,7 +5848,7 @@
 		(net
 			(code "1")
 			(name "+3.3V")
-			(class "Default")
+			(class "Power,Default")
 			(node
 				(ref "C10")
 				(pin "1")
@@ -5917,7 +5917,7 @@
 		(net
 			(code "2")
 			(name "+BATT")
-			(class "Default")
+			(class "Motors,Default")
 			(node
 				(ref "C12")
 				(pin "1")
@@ -7170,7 +7170,7 @@
 		(net
 			(code "49")
 			(name "VBUS")
-			(class "Default")
+			(class "Power,Default")
 			(node
 				(ref "D1")
 				(pin "2")
