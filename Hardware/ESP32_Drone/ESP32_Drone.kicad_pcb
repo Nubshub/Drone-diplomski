@@ -89,7 +89,6 @@
 		)
 		(capping no)
 		(filling no)
-		(zone_defaults)
 		(pcbplotparams
 			(layerselection 0x00000000_00000000_55555555_5755f5ff)
 			(plot_on_all_layers_selection 0x00000000_00000000_00000000_00000000)
@@ -3422,7 +3421,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C23344"
+		(property "LCSC" "C31850"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4550,7 +4549,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C12624"
+		(property "LCSC" "C2290"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5855,7 +5854,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C1740"
+		(property "LCSC" "C1743"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -7102,7 +7101,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C107146 "
+		(property "LCSC" "C28260"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8141,7 +8140,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C181090"
+		(property "LCSC" "C2150"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10244,7 +10243,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C181090"
+		(property "LCSC" "C2150"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10786,7 +10785,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C1806"
+		(property "LCSC" "C377773"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13956,7 +13955,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C1822"
+		(property "LCSC" "C1779"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
