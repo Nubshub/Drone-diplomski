@@ -9919,7 +9919,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 285.75 48.26 0)
+		(at 285.75 48.26 180)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -9927,10 +9927,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "1e6ac754-a8f7-4650-b955-f587315c4d86")
 		(property "Reference" "D3"
-			(at 284.1625 41.91 0)
+			(at 284.48 54.356 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9940,7 +9939,7 @@
 			)
 		)
 		(property "Value" "CHG_FULL"
-			(at 284.1625 44.45 0)
+			(at 285.242 51.816 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10596,10 +10595,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "2bf6779f-51c8-4f30-85e6-8a5876b8b58d")
 		(property "Reference" "R18"
-			(at 302.26 39.37 90)
+			(at 303.022 51.308 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10609,7 +10607,7 @@
 			)
 		)
 		(property "Value" "1k"
-			(at 302.26 41.91 90)
+			(at 303.022 49.53 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -11963,7 +11961,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 292.1 45.72 0)
+		(at 292.1 45.72 180)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -11971,10 +11969,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "4fbc5bd6-d5c7-4353-99d7-1957b4f42beb")
 		(property "Reference" "D2"
-			(at 290.5125 39.37 0)
+			(at 288.544 42.164 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -11984,7 +11981,7 @@
 			)
 		)
 		(property "Value" "CHG"
-			(at 290.5125 41.91 0)
+			(at 287.528 44.196 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -14702,10 +14699,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "93eb56a3-8afe-410e-a280-a2c09644a188")
 		(property "Reference" "R19"
-			(at 295.91 41.91 90)
+			(at 295.91 52.832 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -14715,7 +14711,7 @@
 			)
 		)
 		(property "Value" "1k"
-			(at 295.91 44.45 90)
+			(at 296.164 51.054 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects

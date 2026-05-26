@@ -3673,7 +3673,7 @@
 			(size 0.8 0.95)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net "Net-(D3-A)")
+			(net "Net-(D3-K)")
 			(pintype "passive")
 			(uuid "ee290dd7-8c34-43c0-94f1-26b1d3b06916")
 		)
@@ -4488,7 +4488,7 @@
 	(footprint "LED_SMD:LED_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "37ad1d10-0c19-4b34-9555-242b994fd3ad")
-		(at 250.2125 95.7)
+		(at 250.2125 95.7 180)
 		(descr "LED SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: http://www.tortai-tech.com/upload/download/2011102023233369053.pdf)")
 		(tags "LED")
 		(property "Reference" "D3"
@@ -4537,7 +4537,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 0 0 0)
+			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
@@ -4550,7 +4550,7 @@
 			)
 		)
 		(property "LCSC" "C2290"
-			(at 0 0 0)
+			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
@@ -4575,14 +4575,14 @@
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
-			(start -1.485 -0.735)
-			(end -1.485 0.735)
+			(start 0.8 -0.735)
+			(end -1.485 -0.735)
 			(stroke
 				(width 0.12)
 				(type solid)
 			)
 			(layer "F.SilkS")
-			(uuid "60c8b549-b2c0-48cf-b026-789391e0140b")
+			(uuid "fa12345c-09a0-4c1d-893e-0931209052b2")
 		)
 		(fp_line
 			(start -1.485 0.735)
@@ -4595,14 +4595,14 @@
 			(uuid "e64fd06e-6797-4291-aff8-bb5df120d11f")
 		)
 		(fp_line
-			(start 0.8 -0.735)
-			(end -1.485 -0.735)
+			(start -1.485 -0.735)
+			(end -1.485 0.735)
 			(stroke
 				(width 0.12)
 				(type solid)
 			)
 			(layer "F.SilkS")
-			(uuid "fa12345c-09a0-4c1d-893e-0931209052b2")
+			(uuid "60c8b549-b2c0-48cf-b026-789391e0140b")
 		)
 		(fp_rect
 			(start -1.48 -0.73)
@@ -4616,34 +4616,14 @@
 			(uuid "5b29d7f0-fee0-419b-b1ef-457d0700b84f")
 		)
 		(fp_line
-			(start -0.8 -0.1)
-			(end -0.8 0.4)
+			(start 0.8 0.4)
+			(end 0.8 -0.4)
 			(stroke
 				(width 0.1)
 				(type solid)
 			)
 			(layer "F.Fab")
-			(uuid "dd7794c5-6620-4222-8b8e-61fe6da03be1")
-		)
-		(fp_line
-			(start -0.8 0.4)
-			(end 0.8 0.4)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "599f5f26-e9ea-43af-840a-ff7042f3fb82")
-		)
-		(fp_line
-			(start -0.5 -0.4)
-			(end -0.8 -0.1)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "447cad13-c7e3-47fb-9a12-b7959af70d6b")
+			(uuid "ac580cfe-41da-41d5-8d3b-293355a67cf3")
 		)
 		(fp_line
 			(start 0.8 -0.4)
@@ -4656,14 +4636,34 @@
 			(uuid "c0985829-8acd-4876-acde-67233b74a63c")
 		)
 		(fp_line
-			(start 0.8 0.4)
-			(end 0.8 -0.4)
+			(start -0.5 -0.4)
+			(end -0.8 -0.1)
 			(stroke
 				(width 0.1)
 				(type solid)
 			)
 			(layer "F.Fab")
-			(uuid "ac580cfe-41da-41d5-8d3b-293355a67cf3")
+			(uuid "447cad13-c7e3-47fb-9a12-b7959af70d6b")
+		)
+		(fp_line
+			(start -0.8 0.4)
+			(end 0.8 0.4)
+			(stroke
+				(width 0.1)
+				(type solid)
+			)
+			(layer "F.Fab")
+			(uuid "599f5f26-e9ea-43af-840a-ff7042f3fb82")
+		)
+		(fp_line
+			(start -0.8 -0.1)
+			(end -0.8 0.4)
+			(stroke
+				(width 0.1)
+				(type solid)
+			)
+			(layer "F.Fab")
+			(uuid "dd7794c5-6620-4222-8b8e-61fe6da03be1")
 		)
 		(fp_text user "${REFERENCE}"
 			(at 0 0 0)
@@ -4677,21 +4677,21 @@
 			)
 		)
 		(pad "1" smd roundrect
-			(at -0.7875 0)
+			(at -0.7875 0 180)
 			(size 0.875 0.95)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net "VBUS")
+			(net "Net-(D3-K)")
 			(pinfunction "K_1")
 			(pintype "passive")
 			(uuid "523652f6-5b11-4f73-8000-04234dc8d446")
 		)
 		(pad "2" smd roundrect
-			(at 0.7875 0)
+			(at 0.7875 0 180)
 			(size 0.875 0.95)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net "Net-(D3-A)")
+			(net "VBUS")
 			(pinfunction "A_2")
 			(pintype "passive")
 			(uuid "2186bce8-36ac-4cd8-9b9b-c9e1db71964c")
@@ -7372,7 +7372,7 @@
 	(footprint "LED_SMD:LED_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "7ad9cee3-012b-49be-8629-c7b6e51d28ea")
-		(at 250.2125 97.3)
+		(at 250.2125 97.3 180)
 		(descr "LED SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: http://www.tortai-tech.com/upload/download/2011102023233369053.pdf)")
 		(tags "LED")
 		(property "Reference" "D2"
@@ -7421,7 +7421,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 0 0 0)
+			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
@@ -7434,7 +7434,7 @@
 			)
 		)
 		(property "LCSC" "C2286"
-			(at 0 0 0)
+			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
@@ -7459,14 +7459,14 @@
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
-			(start -1.485 -0.735)
-			(end -1.485 0.735)
+			(start 0.8 -0.735)
+			(end -1.485 -0.735)
 			(stroke
 				(width 0.12)
 				(type solid)
 			)
 			(layer "F.SilkS")
-			(uuid "76d70e73-3d6c-4d28-9470-733872f8b2c1")
+			(uuid "4b2658ad-ff5e-47e4-a4b6-6b7203cc51f3")
 		)
 		(fp_line
 			(start -1.485 0.735)
@@ -7479,14 +7479,14 @@
 			(uuid "cea0896c-8cda-4039-a034-118643bdf20f")
 		)
 		(fp_line
-			(start 0.8 -0.735)
-			(end -1.485 -0.735)
+			(start -1.485 -0.735)
+			(end -1.485 0.735)
 			(stroke
 				(width 0.12)
 				(type solid)
 			)
 			(layer "F.SilkS")
-			(uuid "4b2658ad-ff5e-47e4-a4b6-6b7203cc51f3")
+			(uuid "76d70e73-3d6c-4d28-9470-733872f8b2c1")
 		)
 		(fp_rect
 			(start -1.48 -0.73)
@@ -7500,34 +7500,14 @@
 			(uuid "e2840fa5-3582-428a-a087-e7ec55e21e6c")
 		)
 		(fp_line
-			(start -0.8 -0.1)
-			(end -0.8 0.4)
+			(start 0.8 0.4)
+			(end 0.8 -0.4)
 			(stroke
 				(width 0.1)
 				(type solid)
 			)
 			(layer "F.Fab")
-			(uuid "56eeef67-5a5d-4573-bef2-a2b965fe7cbf")
-		)
-		(fp_line
-			(start -0.8 0.4)
-			(end 0.8 0.4)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "ef77ae45-4c67-4e44-a555-85aad717d027")
-		)
-		(fp_line
-			(start -0.5 -0.4)
-			(end -0.8 -0.1)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "bd3a3a01-cdb5-4d81-86bc-595284e8ceb4")
+			(uuid "900533cc-5354-4e3d-87b6-3119a4634023")
 		)
 		(fp_line
 			(start 0.8 -0.4)
@@ -7540,14 +7520,34 @@
 			(uuid "51821245-bff0-449b-b048-7e3a28229649")
 		)
 		(fp_line
-			(start 0.8 0.4)
-			(end 0.8 -0.4)
+			(start -0.5 -0.4)
+			(end -0.8 -0.1)
 			(stroke
 				(width 0.1)
 				(type solid)
 			)
 			(layer "F.Fab")
-			(uuid "900533cc-5354-4e3d-87b6-3119a4634023")
+			(uuid "bd3a3a01-cdb5-4d81-86bc-595284e8ceb4")
+		)
+		(fp_line
+			(start -0.8 0.4)
+			(end 0.8 0.4)
+			(stroke
+				(width 0.1)
+				(type solid)
+			)
+			(layer "F.Fab")
+			(uuid "ef77ae45-4c67-4e44-a555-85aad717d027")
+		)
+		(fp_line
+			(start -0.8 -0.1)
+			(end -0.8 0.4)
+			(stroke
+				(width 0.1)
+				(type solid)
+			)
+			(layer "F.Fab")
+			(uuid "56eeef67-5a5d-4573-bef2-a2b965fe7cbf")
 		)
 		(fp_text user "${REFERENCE}"
 			(at 0 0 0)
@@ -7561,21 +7561,21 @@
 			)
 		)
 		(pad "1" smd roundrect
-			(at -0.7875 0)
+			(at -0.7875 0 180)
 			(size 0.875 0.95)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net "VBUS")
+			(net "Net-(D2-K)")
 			(pinfunction "K_1")
 			(pintype "passive")
 			(uuid "078f1b3b-bb3a-43a9-b5a5-1f2fc75e426e")
 		)
 		(pad "2" smd roundrect
-			(at 0.7875 0)
+			(at 0.7875 0 180)
 			(size 0.875 0.95)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net "Net-(D2-A)")
+			(net "VBUS")
 			(pinfunction "A_2")
 			(pintype "passive")
 			(uuid "186d1e40-3b4b-434f-a169-e4e1a12fbe03")
@@ -16099,7 +16099,7 @@
 			(size 0.8 0.95)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net "Net-(D2-A)")
+			(net "Net-(D2-K)")
 			(pintype "passive")
 			(uuid "1d12759f-b2c3-4eb1-82cc-a0aeb4777c43")
 		)
@@ -21607,14 +21607,6 @@
 		(uuid "f3e5be5c-b910-498e-9d64-342655953605")
 	)
 	(segment
-		(start 251 95.5)
-		(end 252.5 95.5)
-		(width 0.25)
-		(layer "F.Cu")
-		(net "Net-(D3-A)")
-		(uuid "24d270e2-ddd8-4c41-b544-8938edd9c149")
-	)
-	(segment
 		(start 235 102)
 		(end 235 98)
 		(width 0.25)
@@ -21965,14 +21957,6 @@
 		(layer "F.Cu")
 		(net "Net-(U3-REGOUT)")
 		(uuid "eb32c64a-6eb7-43fa-92eb-7758f12117c1")
-	)
-	(segment
-		(start 251 97)
-		(end 252.5 97)
-		(width 0.25)
-		(layer "F.Cu")
-		(net "Net-(D2-A)")
-		(uuid "9c99d434-a5aa-438a-be83-c88c36c28b11")
 	)
 	(segment
 		(start 253.45 111.3625)
@@ -22389,6 +22373,22 @@
 		(layer "F.Cu")
 		(net "Net-(J1-CC1)")
 		(uuid "8ff2dbaa-42d4-40a2-8348-92db804d37c2")
+	)
+	(segment
+		(start 251 97)
+		(end 252.5 97)
+		(width 0.25)
+		(layer "F.Cu")
+		(net "Net-(D2-K)")
+		(uuid "9c99d434-a5aa-438a-be83-c88c36c28b11")
+	)
+	(segment
+		(start 251 95.5)
+		(end 252.5 95.5)
+		(width 0.25)
+		(layer "F.Cu")
+		(net "Net-(D3-K)")
+		(uuid "24d270e2-ddd8-4c41-b544-8938edd9c149")
 	)
 	(zone
 		(net "+3.3V")
