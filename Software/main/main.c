@@ -21,7 +21,7 @@
 #define MOTOR3_CONTROL_PIN          GPIO_NUM_14 /*!< GPIO pin for motor 3 control */
 #define MOTOR4_CONTROL_PIN          GPIO_NUM_15 /*!< GPIO pin for motor 4 controlS */
 #define MPU6050_SENSITIVITY_2G      16384       /*!< MPU6050 sensitivity at ±2g full scale (LSB/g) */
-#define MPU6050_SENSITIVITY_250DPS   131        /*!< MPU6050 sensitivity at ±250°/s full scale (LSB/°/s) */
+#define MPU6050_SENSITIVITY_500DPS  65.5        /*!< MPU6050 sensitivity at ±500°/s full scale (LSB/°/s) */
 #define MAX_THURST_VALUE            65535     /*!< Maximum thrust value for motor control is 65535 */
 // #define THURST_VALUE_90             58500      /*!< Maximum thrust value to avoid overloading motors */
 #define MAX_PWM_DUTY_CYCLE          8191        /*!< Maximum PWM duty cycle for 10-bit resolution */
@@ -52,14 +52,8 @@ crtp_packet_t pkt;
 uint8_t rx_buffer[1024];
 int len;
 static mpu6050_regs mpu6050_data;
-static TaskHandle_t mpu6050_task_handle = NULL;
-
-static void IRAM_ATTR mpu6050_isr_handler(void* arg)
-{
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    vTaskNotifyGiveFromISR(mpu6050_task_handle, &xHigherPriorityTaskWoken);
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-}
+static int16_t gyro_bias_x, gyro_bias_y, gyro_bias_z;
+static int16_t accel_bias_x, accel_bias_y, accel_bias_z;
 
 const struct {ledc_channel_t ch; int gpio;} motors[] = {
     {LEDC_CHANNEL_0, MOTOR1_CONTROL_PIN},
@@ -100,53 +94,74 @@ static void timer_config(void)
 
 }
 
-static void gpio_init(void)
+static void calibrate_mpu6050(void)
 {
-    gpio_config_t io_conf = {
-        .intr_type = GPIO_INTR_POSEDGE,
-        .mode = GPIO_MODE_INPUT,
-        .pin_bit_mask = (1ULL << GPIO_INPUT_PIN),
-        .pull_down_en = GPIO_PULLDOWN_DISABLE,
-        .pull_up_en = GPIO_PULLUP_ENABLE,
-    };
+    const int N = 500;
+    int32_t sum_ax = 0, sum_ay = 0, sum_az = 0;
+    int32_t sum_gx = 0, sum_gy = 0, sum_gz = 0;
 
-    ESP_ERROR_CHECK(gpio_config(&io_conf));
+    // Wait for PLL to lock and DLPF pipeline to fill
+    vTaskDelay(100 / portTICK_PERIOD_MS);
 
-    // Install GPIO ISR service
-    ESP_ERROR_CHECK(gpio_install_isr_service(0));
+    printf("MPU6050 calibration started, keep drone still...\n");
 
-    // Attach the interrupt service routine to the GPIO pin
-    ESP_ERROR_CHECK(gpio_isr_handler_add(GPIO_INPUT_PIN, mpu6050_isr_handler, NULL));
-    
-    printf("GPIO init done!\n");
+    for (int i = 0; i < N; i++) {
+        uint8_t reg = MPU6050_REG_ACCEL_XOUT_H;
+        uint8_t data[14];
+        ESP_ERROR_CHECK(i2c_master_transmit_receive(mpu6050_handle, &reg, 1, data, sizeof(data), -1));
+
+        sum_ax += (int16_t)((data[0] << 8)  | data[1]);
+        sum_ay += (int16_t)((data[2] << 8)  | data[3]);
+        sum_az += (int16_t)((data[4] << 8)  | data[5]);
+        sum_gx += (int16_t)((data[8] << 8)  | data[9]);
+        sum_gy += (int16_t)((data[10] << 8) | data[11]);
+        sum_gz += (int16_t)((data[12] << 8) | data[13]);
+
+        vTaskDelay(2 / portTICK_PERIOD_MS);
+    }
+
+    // Gyro bias
+    gyro_bias_x = (int16_t)(sum_gx / N);
+    gyro_bias_y = (int16_t)(sum_gy / N);
+    gyro_bias_z = (int16_t)(sum_gz / N);
+
+    int32_t avg_ax = sum_ax / N;
+    int32_t avg_ay = sum_ay / N;
+    int32_t avg_az = sum_az / N;
+
+    printf("  Accel raw avg (LSB): X=%ld Y=%ld Z=%ld\n", avg_ax, avg_ay, avg_az);
+
+    // Expected Z: -16384 if Z points up, +16384 if Z points down
+    int32_t expected_z = (avg_az < 0) ? -16384 : 16384;
+
+    accel_bias_x = (int16_t)(avg_ax);
+    accel_bias_y = (int16_t)(avg_ay);
+    accel_bias_z = (int16_t)(avg_az - expected_z);
+
+    printf("Calibration done.\n");
+    printf("  Gyro bias  (LSB): X=%d Y=%d Z=%d\n", gyro_bias_x, gyro_bias_y, gyro_bias_z);
+    printf("  Accel bias (LSB): X=%d Y=%d Z=%d (expected_z=%ld)\n", accel_bias_x, accel_bias_y, accel_bias_z, expected_z);
 }
-
 
 static void configure_mpu6050(void)
 {
-    // Wake up MPU6050
-    ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x6B, 0x00));  // PWR_MGMT_1 = 0
-    printf("MPU6050 is started!\n");
+    // Full device reset — clears all registers including hardware offset registers
+    ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x6B, 0x80));
+    vTaskDelay(100 / portTICK_PERIOD_MS);
 
-    // Set accelerometer to ±2g for max sensitivity
-    ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x1C, 0x00));
-
-    // Motion interrupt
-    ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x38, 0x40));  // enable motion interrupt
-    ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x1F, 0x02));  // lower threshold → small motion
-    ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x20, 0x01));  // short duration → fast trigger
-    ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x37, 0x10));  // INT pin config
+    ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x6B, 0x01));  // PWR_MGMT_1: wake, PLL gyro X
+    ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x1A, 0x03));  // CONFIG: DLPF 42 Hz (reduces vibration noise)
+    ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x1B, 0x08));  // GYRO_CONFIG: ±500°/s
+    ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x1C, 0x00));  // ACCEL_CONFIG: ±2g
+    ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x38, 0x00));  // INT_ENABLE: all off (polling mode)
+    printf("MPU6050 configured.\n");
 }
 
 static void vTask_mpu6050 (void * pvParametars)
 {
-    for(;;)
+    while(1)
     {
         printf("Enter vTask_mpu6050\n");
-
-        // Wait for GPIO interrupt to notify the task
-        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-        printf("GPIO interrupt triggered!\n");
 
         uint8_t reg = MPU6050_REG_ACCEL_XOUT_H;
         uint8_t data[14]; // accel(6) + temp(2) + gyro(6)
@@ -154,24 +169,26 @@ static void vTask_mpu6050 (void * pvParametars)
         ESP_ERROR_CHECK(i2c_master_transmit_receive(mpu6050_handle, &reg, 1, data, sizeof(data), -1));
 
         // Parse values (16-bit signed big-endian)
-        mpu6050_data.accel_x = (data[0] << 8) | data[1];
-        mpu6050_data.accel_y = (data[2] << 8) | data[3];
-        mpu6050_data.accel_z = (data[4] << 8) | data[5];
-        mpu6050_data.temp_raw = (data[6] << 8) | data[7];
-        mpu6050_data.gyro_x  = (data[8] << 8) | data[9];
-        mpu6050_data.gyro_y  = (data[10] << 8) | data[11];
-        mpu6050_data.gyro_z  = (data[12] << 8) | data[13];
+        mpu6050_data.accel_x  = (int16_t)((data[0] << 8) | data[1]) - accel_bias_x;
+        mpu6050_data.accel_y  = (int16_t)((data[2] << 8) | data[3]) - accel_bias_y;
+        mpu6050_data.accel_z  = (int16_t)((data[4] << 8) | data[5]) - accel_bias_z;
+        mpu6050_data.temp_raw = (int16_t)((data[6] << 8) | data[7]);
+        mpu6050_data.gyro_x  = (int16_t)((data[8] << 8)  | data[9])  - gyro_bias_x;
+        mpu6050_data.gyro_y  = (int16_t)((data[10] << 8) | data[11]) - gyro_bias_y;
+        mpu6050_data.gyro_z  = (int16_t)((data[12] << 8) | data[13]) - gyro_bias_z;
         
         printf("Accel: X=%.2f g Y=%.2f g Z=%.2f g | Gyro: X=%.2f o/s Y=%.2f o/s Z=%.2f o/s \n",
                  (float)mpu6050_data.accel_x/MPU6050_SENSITIVITY_2G, 
                  (float)mpu6050_data.accel_y/MPU6050_SENSITIVITY_2G, 
                  (float)mpu6050_data.accel_z/MPU6050_SENSITIVITY_2G, 
-                 (float)mpu6050_data.gyro_x/MPU6050_SENSITIVITY_250DPS, 
-                 (float)mpu6050_data.gyro_y/MPU6050_SENSITIVITY_250DPS, 
-                 (float)mpu6050_data.gyro_z/MPU6050_SENSITIVITY_250DPS);
+                 (float)mpu6050_data.gyro_x/MPU6050_SENSITIVITY_500DPS, 
+                 (float)mpu6050_data.gyro_y/MPU6050_SENSITIVITY_500DPS, 
+                 (float)mpu6050_data.gyro_z/MPU6050_SENSITIVITY_500DPS);
 
-        // vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
+
+    vTaskDelete(NULL);
 }
 
 static void motor_thrust(uint16_t thrust, uint8_t motor_index)
@@ -181,19 +198,8 @@ static void motor_thrust(uint16_t thrust, uint8_t motor_index)
     }
 
     uint32_t duty = ((uint32_t)thrust * MAX_PWM_DUTY_CYCLE) / MAX_THURST_VALUE;
-    printf("Setting motor duty cycle to %ld for thrust %d\n", duty, thrust);
     ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, motors[motor_index].ch, duty));
     ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, motors[motor_index].ch));
-
-}
-
-static void parse_crtp_packet(uint8_t *data, ssize_t len)
-{
-    if (len < 2) {
-        return; // Packet too short
-    }
-    
-    memcpy(&pkt, data, sizeof(pkt));
 
 }
 
@@ -201,13 +207,15 @@ static void vMotor_control(void *pvParametars)
 {
     while(1)
     {
-        parse_crtp_packet(rx_buffer, len);
+        memcpy(&pkt, rx_buffer, sizeof(pkt)); // Copy received data into packet structure
         motor_thrust(pkt.thrust, 0);
         motor_thrust(pkt.thrust, 1);
         motor_thrust(pkt.thrust, 2);
         motor_thrust(pkt.thrust, 3);
 
-        printf("Motor thrust set to %d\n", pkt.thrust);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+        // printf("Motor thrust set to %d\n", pkt.thrust);
     }
 
     vTaskDelete(NULL);
@@ -262,16 +270,14 @@ void app_main(void)
     
     i2c_master_init();
     
-    configure_mpu6050();  
-
-    gpio_init();
+    configure_mpu6050();
+    calibrate_mpu6050();
 
     timer_config();
 
     wifi_init();
 
-    xReturned = xTaskCreate(vTask_mpu6050, "vTask_mpu6050", 4096, NULL, 
-        1, &mpu6050_task_handle);
+    xReturned = xTaskCreate(vTask_mpu6050, "vTask_mpu6050", 4096, NULL, 1, NULL);
     if(xReturned != pdPASS)
     {
         printf("Error: Failed to create vTask_mpu6050 task!\n");
