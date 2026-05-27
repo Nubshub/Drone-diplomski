@@ -25,6 +25,9 @@
 #define MAX_THURST_VALUE            65535     /*!< Maximum thrust value for motor control is 65535 */
 // #define THURST_VALUE_90             58500      /*!< Maximum thrust value to avoid overloading motors */
 #define MAX_PWM_DUTY_CYCLE          8191        /*!< Maximum PWM duty cycle for 10-bit resolution */
+#define KP_LEVELING                 0.1f        /*!< Proportional gain for roll/pitch leveling — tune this */
+#define KD_LEVELING                 0.001f      /*!< Derivative gain (gyro damping) — tune this */
+#define CLAMP(x, lo, hi)            ((x) < (lo) ? (lo) : ((x) > (hi) ? (hi) : (x)))
 
 typedef struct {
     int16_t accel_x;
@@ -161,8 +164,6 @@ static void vTask_mpu6050 (void * pvParametars)
 {
     while(1)
     {
-        printf("Enter vTask_mpu6050\n");
-
         uint8_t reg = MPU6050_REG_ACCEL_XOUT_H;
         uint8_t data[14]; // accel(6) + temp(2) + gyro(6)
 
@@ -177,15 +178,7 @@ static void vTask_mpu6050 (void * pvParametars)
         mpu6050_data.gyro_y  = (int16_t)((data[10] << 8) | data[11]) - gyro_bias_y;
         mpu6050_data.gyro_z  = (int16_t)((data[12] << 8) | data[13]) - gyro_bias_z;
         
-        printf("Accel: X=%.2f g Y=%.2f g Z=%.2f g | Gyro: X=%.2f o/s Y=%.2f o/s Z=%.2f o/s \n",
-                 (float)mpu6050_data.accel_x/MPU6050_SENSITIVITY_2G, 
-                 (float)mpu6050_data.accel_y/MPU6050_SENSITIVITY_2G, 
-                 (float)mpu6050_data.accel_z/MPU6050_SENSITIVITY_2G, 
-                 (float)mpu6050_data.gyro_x/MPU6050_SENSITIVITY_500DPS, 
-                 (float)mpu6050_data.gyro_y/MPU6050_SENSITIVITY_500DPS, 
-                 (float)mpu6050_data.gyro_z/MPU6050_SENSITIVITY_500DPS);
-
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
     }
 
     vTaskDelete(NULL);
@@ -207,15 +200,41 @@ static void vMotor_control(void *pvParametars)
 {
     while(1)
     {
-        memcpy(&pkt, rx_buffer, sizeof(pkt)); // Copy received data into packet structure
-        motor_thrust(pkt.thrust, 0);
-        motor_thrust(pkt.thrust, 1);
-        motor_thrust(pkt.thrust, 2);
-        motor_thrust(pkt.thrust, 3);
+        memcpy(&pkt, rx_buffer, sizeof(pkt));
 
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        if (pkt.thrust > 0) {
+            // accel_x = pitch axis (M1/M3 = front), accel_y = roll axis (M3/M4 = right)
+            // Negative sign: positive accel → that side is DOWN → increase those motors (negative corr)
+            float err_pitch  = -(float)mpu6050_data.accel_x / MPU6050_SENSITIVITY_2G;
+            float err_roll   = -(float)mpu6050_data.accel_y / MPU6050_SENSITIVITY_2G;
+            float rate_pitch = -(float)mpu6050_data.gyro_y / MPU6050_SENSITIVITY_500DPS;
+            float rate_roll  = -(float)mpu6050_data.gyro_x / MPU6050_SENSITIVITY_500DPS;
 
-        // printf("Motor thrust set to %d\n", pkt.thrust);
+            int32_t corr_roll  = (int32_t)((KP_LEVELING * err_roll  - KD_LEVELING * rate_roll)  * MAX_THURST_VALUE);
+            int32_t corr_pitch = (int32_t)((KP_LEVELING * err_pitch - KD_LEVELING * rate_pitch) * MAX_THURST_VALUE);
+
+            int32_t m0 = (int32_t)pkt.thrust - corr_pitch + corr_roll;  // M1: +X, -Y
+            int32_t m1 = (int32_t)pkt.thrust + corr_pitch + corr_roll;  // M2: -X, -Y
+            int32_t m2 = (int32_t)pkt.thrust - corr_pitch - corr_roll;  // M3: +X, +Y
+            int32_t m3 = (int32_t)pkt.thrust + corr_pitch - corr_roll;  // M4: -X, +Y
+
+            motor_thrust((uint16_t)CLAMP(m0, 0, MAX_THURST_VALUE), 0);
+            motor_thrust((uint16_t)CLAMP(m1, 0, MAX_THURST_VALUE), 1);
+            motor_thrust((uint16_t)CLAMP(m2, 0, MAX_THURST_VALUE), 2);
+            motor_thrust((uint16_t)CLAMP(m3, 0, MAX_THURST_VALUE), 3);
+
+            printf("err=%.2f/%.2f corr=%ld/%ld m=%ld/%ld/%ld/%ld\n",
+                   err_roll, err_pitch, corr_roll, corr_pitch,
+                   CLAMP(m0,0,MAX_THURST_VALUE), CLAMP(m1,0,MAX_THURST_VALUE),
+                   CLAMP(m2,0,MAX_THURST_VALUE), CLAMP(m3,0,MAX_THURST_VALUE));
+        } else {
+            motor_thrust(0, 0);
+            motor_thrust(0, 1);
+            motor_thrust(0, 2);
+            motor_thrust(0, 3);
+        }
+
+        vTaskDelay(20 / portTICK_PERIOD_MS);
     }
 
     vTaskDelete(NULL);
