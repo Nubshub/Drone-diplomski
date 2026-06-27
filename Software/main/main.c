@@ -21,12 +21,12 @@
 #define MOTOR3_CONTROL_PIN          GPIO_NUM_14 /*!< GPIO pin for motor 3 control */
 #define MOTOR4_CONTROL_PIN          GPIO_NUM_15 /*!< GPIO pin for motor 4 controlS */
 #define MPU6050_SENSITIVITY_2G      16384       /*!< MPU6050 sensitivity at ±2g full scale (LSB/g) */
-#define MPU6050_SENSITIVITY_500DPS  65.5        /*!< MPU6050 sensitivity at ±500°/s full scale (LSB/°/s) */
+#define MPU6050_SENSITIVITY_500DPS  131.0f        /*!< MPU6050 sensitivity at ±250°/s full scale (LSB/°/s) */
 #define MPU6050_GYRO_DEADBAND       20           /*!< MPU6050 gyro deadband threshold (LSB) */
-#define MAX_THURST_VALUE            65535     /*!< Maximum thrust value for motor control is 65535 */
+#define MAX_THURST_VALUE            65000     /*!< Maximum thrust value for motor control is 65535 */
 // #define THURST_VALUE_90             58500      /*!< Maximum thrust value to avoid overloading motors */
 #define MAX_PWM_DUTY_CYCLE          8191        /*!< Maximum PWM duty cycle for 10-bit resolution */
-#define KP_LEVELING                 2       /*!< Proportional gain for roll/pitch leveling — tune this */
+#define KP_LEVELING                 20       /*!< Proportional gain for roll/pitch leveling — tune this */
 #define KD_LEVELING                 0.02      /*!< Derivative gain (gyro damping) — tune this */
 #define CLAMP(x, lo, hi)            ((x) < (lo) ? (lo) : ((x) > (hi) ? (hi) : (x)))
 
@@ -136,7 +136,7 @@ static void configure_mpu6050(void)
 
     ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x6B, 0x01));  // PWR_MGMT_1: wake, PLL gyro X
     ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x1A, 0x03));  // CONFIG: DLPF 42 Hz (reduces vibration noise)
-    ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x1B, 0x08));  // GYRO_CONFIG: ±500°/s
+    ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x1B, 0x00));  // GYRO_CONFIG: ±250°/s
     ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x1C, 0x00));  // ACCEL_CONFIG: ±2g
     ESP_ERROR_CHECK(i2c_write_reg(mpu6050_handle, 0x38, 0x00));  // INT_ENABLE: all off (polling mode)
     printf("MPU6050 configured.\n");
@@ -176,6 +176,7 @@ static void motor_thrust(uint16_t thrust, uint8_t motor_index)
         thrust = MAX_THURST_VALUE;
     }
 
+    // Convert thrust to PWM duty cycle (10-bit resolution)
     uint32_t duty = ((uint32_t)thrust * MAX_PWM_DUTY_CYCLE) / MAX_THURST_VALUE;
     ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, motors[motor_index].ch, duty));
     ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, motors[motor_index].ch));
@@ -186,8 +187,6 @@ static void vMotor_control(void *pvParametars)
 {
     while(1)
     {
-        memcpy(&pkt, rx_buffer, sizeof(pkt));
-
         uint16_t m0 = pkt.thrust;
         uint16_t m1 = pkt.thrust;
         uint16_t m2 = pkt.thrust;
@@ -233,42 +232,6 @@ static void vMotor_control(void *pvParametars)
             motor_thrust(0, 3);
         }
 
-        
-        // uint16_t m0 = pkt.thrust;
-        // uint16_t m1 = pkt.thrust;
-        // uint16_t m2 = pkt.thrust;
-        // uint16_t m3 = pkt.thrust;
-
-        // if (pkt.thrust > 0) {
-
-        //     if (mpu6050_data.gyro_x > MPU6050_GYRO_DEADBAND) {
-        //         m0 = (uint16_t)(m0 * 0.8f);
-        //         m1 = (uint16_t)(m1 * 0.8f);
-        //     } else if (mpu6050_data.gyro_x < -MPU6050_GYRO_DEADBAND) {
-        //         m2 = (uint16_t)(m2 * 0.8f);
-        //         m3 = (uint16_t)(m3 * 0.8f);
-        //     }
-
-        //     if (mpu6050_data.gyro_y > MPU6050_GYRO_DEADBAND) {
-        //         m0 = (uint16_t)(m0 * 0.8f);
-        //         m2 = (uint16_t)(m2 * 0.8f);
-        //     } else if (mpu6050_data.gyro_y < -MPU6050_GYRO_DEADBAND) {
-        //         m1 = (uint16_t)(m1 * 0.8f);
-        //         m3 = (uint16_t)(m3 * 0.8f);
-        //     }
-
-        //     motor_thrust(m0, 0);
-        //     motor_thrust(m1, 1);
-        //     motor_thrust(m2, 2);
-        //     motor_thrust(m3, 3);
-
-        // } else {
-        //     motor_thrust(0, 0);
-        //     motor_thrust(0, 1);
-        //     motor_thrust(0, 2);
-        //     motor_thrust(0, 3);
-        // }
-
         vTaskDelay(5 / portTICK_PERIOD_MS);
     }
 
@@ -309,7 +272,7 @@ static void vUdp_server(void * pvParametars)
             break;
         } else if (len > 0) {
             rx_buffer[len] = '\0'; // Null-terminate the received data
-            // parse_crtp_packet(rx_buffer, len);
+            memcpy(&pkt, rx_buffer, sizeof(crtp_packet_t));
         }
     }
 
@@ -343,7 +306,7 @@ void app_main(void)
         printf("Error: Failed to create  vUdp_server task!\n");
     }
 
-    xReturned = xTaskCreate(vMotor_control, "vMotor_control", 4096, NULL, 6, NULL);
+    xReturned = xTaskCreate(vMotor_control, "vMotor_control", 4096, NULL, 2, NULL);
     if(xReturned != pdPASS)
     {
         printf("Error: Failed to create  vMotor_control task!\n");
