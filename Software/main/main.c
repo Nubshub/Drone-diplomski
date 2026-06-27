@@ -22,11 +22,12 @@
 #define MOTOR4_CONTROL_PIN          GPIO_NUM_15 /*!< GPIO pin for motor 4 controlS */
 #define MPU6050_SENSITIVITY_2G      16384       /*!< MPU6050 sensitivity at ±2g full scale (LSB/g) */
 #define MPU6050_SENSITIVITY_500DPS  65.5        /*!< MPU6050 sensitivity at ±500°/s full scale (LSB/°/s) */
+#define MPU6050_GYRO_DEADBAND       20           /*!< MPU6050 gyro deadband threshold (LSB) */
 #define MAX_THURST_VALUE            65535     /*!< Maximum thrust value for motor control is 65535 */
 // #define THURST_VALUE_90             58500      /*!< Maximum thrust value to avoid overloading motors */
 #define MAX_PWM_DUTY_CYCLE          8191        /*!< Maximum PWM duty cycle for 10-bit resolution */
-#define KP_LEVELING                 0.1f        /*!< Proportional gain for roll/pitch leveling — tune this */
-#define KD_LEVELING                 0.001f      /*!< Derivative gain (gyro damping) — tune this */
+#define KP_LEVELING                 2       /*!< Proportional gain for roll/pitch leveling — tune this */
+#define KD_LEVELING                 0.02      /*!< Derivative gain (gyro damping) — tune this */
 #define CLAMP(x, lo, hi)            ((x) < (lo) ? (lo) : ((x) > (hi) ? (hi) : (x)))
 
 typedef struct {
@@ -56,7 +57,6 @@ uint8_t rx_buffer[1024];
 int len;
 static mpu6050_regs mpu6050_data;
 static int16_t gyro_bias_x, gyro_bias_y, gyro_bias_z;
-static int16_t accel_bias_x, accel_bias_y, accel_bias_z;
 
 const struct {ledc_channel_t ch; int gpio;} motors[] = {
     {LEDC_CHANNEL_0, MOTOR1_CONTROL_PIN},
@@ -100,7 +100,6 @@ static void timer_config(void)
 static void calibrate_mpu6050(void)
 {
     const int N = 500;
-    int32_t sum_ax = 0, sum_ay = 0, sum_az = 0;
     int32_t sum_gx = 0, sum_gy = 0, sum_gz = 0;
 
     // Wait for PLL to lock and DLPF pipeline to fill
@@ -113,9 +112,6 @@ static void calibrate_mpu6050(void)
         uint8_t data[14];
         ESP_ERROR_CHECK(i2c_master_transmit_receive(mpu6050_handle, &reg, 1, data, sizeof(data), -1));
 
-        sum_ax += (int16_t)((data[0] << 8)  | data[1]);
-        sum_ay += (int16_t)((data[2] << 8)  | data[3]);
-        sum_az += (int16_t)((data[4] << 8)  | data[5]);
         sum_gx += (int16_t)((data[8] << 8)  | data[9]);
         sum_gy += (int16_t)((data[10] << 8) | data[11]);
         sum_gz += (int16_t)((data[12] << 8) | data[13]);
@@ -128,22 +124,8 @@ static void calibrate_mpu6050(void)
     gyro_bias_y = (int16_t)(sum_gy / N);
     gyro_bias_z = (int16_t)(sum_gz / N);
 
-    int32_t avg_ax = sum_ax / N;
-    int32_t avg_ay = sum_ay / N;
-    int32_t avg_az = sum_az / N;
-
-    printf("  Accel raw avg (LSB): X=%ld Y=%ld Z=%ld\n", avg_ax, avg_ay, avg_az);
-
-    // Expected Z: -16384 if Z points up, +16384 if Z points down
-    int32_t expected_z = (avg_az < 0) ? -16384 : 16384;
-
-    accel_bias_x = (int16_t)(avg_ax);
-    accel_bias_y = (int16_t)(avg_ay);
-    accel_bias_z = (int16_t)(avg_az - expected_z);
-
     printf("Calibration done.\n");
     printf("  Gyro bias  (LSB): X=%d Y=%d Z=%d\n", gyro_bias_x, gyro_bias_y, gyro_bias_z);
-    printf("  Accel bias (LSB): X=%d Y=%d Z=%d (expected_z=%ld)\n", accel_bias_x, accel_bias_y, accel_bias_z, expected_z);
 }
 
 static void configure_mpu6050(void)
@@ -170,14 +152,18 @@ static void vTask_mpu6050 (void * pvParametars)
         ESP_ERROR_CHECK(i2c_master_transmit_receive(mpu6050_handle, &reg, 1, data, sizeof(data), -1));
 
         // Parse values (16-bit signed big-endian)
-        mpu6050_data.accel_x  = (int16_t)((data[0] << 8) | data[1]) - accel_bias_x;
-        mpu6050_data.accel_y  = (int16_t)((data[2] << 8) | data[3]) - accel_bias_y;
-        mpu6050_data.accel_z  = (int16_t)((data[4] << 8) | data[5]) - accel_bias_z;
+        mpu6050_data.accel_x  = (int16_t)((data[0] << 8) | data[1]);
+        mpu6050_data.accel_y  = (int16_t)((data[2] << 8) | data[3]);
+        mpu6050_data.accel_z  = (int16_t)((data[4] << 8) | data[5]);
         mpu6050_data.temp_raw = (int16_t)((data[6] << 8) | data[7]);
         mpu6050_data.gyro_x  = (int16_t)((data[8] << 8)  | data[9])  - gyro_bias_x;
         mpu6050_data.gyro_y  = (int16_t)((data[10] << 8) | data[11]) - gyro_bias_y;
         mpu6050_data.gyro_z  = (int16_t)((data[12] << 8) | data[13]) - gyro_bias_z;
         
+
+        // printf("Accel: X=%d Y=%d Z=%d | Gyro: X=%d Y=%d Z=%d\n",
+        //        mpu6050_data.accel_x, mpu6050_data.accel_y, mpu6050_data.accel_z,
+        //        mpu6050_data.gyro_x, mpu6050_data.gyro_y, mpu6050_data.gyro_z);
         vTaskDelay(5 / portTICK_PERIOD_MS);
     }
 
@@ -202,31 +188,44 @@ static void vMotor_control(void *pvParametars)
     {
         memcpy(&pkt, rx_buffer, sizeof(pkt));
 
-        if (pkt.thrust > 0) {
-            // accel_x = pitch axis (M1/M3 = front), accel_y = roll axis (M3/M4 = right)
-            // Negative sign: positive accel → that side is DOWN → increase those motors (negative corr)
-            float err_pitch  = -(float)mpu6050_data.accel_x / MPU6050_SENSITIVITY_2G;
-            float err_roll   = -(float)mpu6050_data.accel_y / MPU6050_SENSITIVITY_2G;
-            float rate_pitch = -(float)mpu6050_data.gyro_y / MPU6050_SENSITIVITY_500DPS;
-            float rate_roll  = -(float)mpu6050_data.gyro_x / MPU6050_SENSITIVITY_500DPS;
+        uint16_t m0 = pkt.thrust;
+        uint16_t m1 = pkt.thrust;
+        uint16_t m2 = pkt.thrust;
+        uint16_t m3 = pkt.thrust;
 
-            int32_t corr_roll  = (int32_t)((KP_LEVELING * err_roll  - KD_LEVELING * rate_roll)  * MAX_THURST_VALUE);
-            int32_t corr_pitch = (int32_t)((KP_LEVELING * err_pitch - KD_LEVELING * rate_pitch) * MAX_THURST_VALUE);
+        if(pkt.thrust > 0){
+            // If the gyro readings exceed the deadband threshold, calculate errors and adjust motor thrust accordingly
+            if(mpu6050_data.gyro_x > MPU6050_GYRO_DEADBAND || mpu6050_data.gyro_x < -MPU6050_GYRO_DEADBAND ||
+            mpu6050_data.gyro_y > MPU6050_GYRO_DEADBAND || mpu6050_data.gyro_y < -MPU6050_GYRO_DEADBAND ||
+            mpu6050_data.gyro_z > MPU6050_GYRO_DEADBAND || mpu6050_data.gyro_z < -MPU6050_GYRO_DEADBAND) {
 
-            int32_t m0 = (int32_t)pkt.thrust - corr_pitch + corr_roll;  // M1: +X, -Y
-            int32_t m1 = (int32_t)pkt.thrust + corr_pitch + corr_roll;  // M2: -X, -Y
-            int32_t m2 = (int32_t)pkt.thrust - corr_pitch - corr_roll;  // M3: +X, +Y
-            int32_t m3 = (int32_t)pkt.thrust + corr_pitch - corr_roll;  // M4: -X, +Y
+                // Calculate errors between desired angles and current gyro readings
+                float roll_error = pkt.roll - (float)mpu6050_data.gyro_x / MPU6050_SENSITIVITY_500DPS;
+                float pitch_error = pkt.pitch - (float)mpu6050_data.gyro_y / MPU6050_SENSITIVITY_500DPS; 
+                float yaw_error = pkt.yaw - (float)mpu6050_data.gyro_z / MPU6050_SENSITIVITY_500DPS; 
 
-            motor_thrust((uint16_t)CLAMP(m0, 0, MAX_THURST_VALUE), 0);
-            motor_thrust((uint16_t)CLAMP(m1, 0, MAX_THURST_VALUE), 1);
-            motor_thrust((uint16_t)CLAMP(m2, 0, MAX_THURST_VALUE), 2);
-            motor_thrust((uint16_t)CLAMP(m3, 0, MAX_THURST_VALUE), 3);
+                // Calculate adjustments based on proportional gain
+                float roll_adjustment = KP_LEVELING * roll_error;
+                float pitch_adjustment = KP_LEVELING * pitch_error;
+                float yaw_adjustment = KP_LEVELING * yaw_error;
 
-            printf("err=%.2f/%.2f corr=%ld/%ld m=%ld/%ld/%ld/%ld\n",
-                   err_roll, err_pitch, corr_roll, corr_pitch,
-                   CLAMP(m0,0,MAX_THURST_VALUE), CLAMP(m1,0,MAX_THURST_VALUE),
-                   CLAMP(m2,0,MAX_THURST_VALUE), CLAMP(m3,0,MAX_THURST_VALUE));
+                // Adjust motor thrust based on errors and adjustments
+                m0 = pkt.thrust + (uint16_t)(roll_adjustment + pitch_adjustment + yaw_adjustment);
+                m1 = pkt.thrust + (uint16_t)(roll_adjustment - pitch_adjustment - yaw_adjustment);
+                m2 = pkt.thrust + (uint16_t)(-roll_adjustment + pitch_adjustment - yaw_adjustment);
+                m3 = pkt.thrust + (uint16_t)(-roll_adjustment - pitch_adjustment + yaw_adjustment);
+
+                // Clamp thrust values to ensure they are within valid range
+                m0 = CLAMP(m0, 0, MAX_THURST_VALUE);
+                m1 = CLAMP(m1, 0, MAX_THURST_VALUE);
+                m2 = CLAMP(m2, 0, MAX_THURST_VALUE);
+                m3 = CLAMP(m3, 0, MAX_THURST_VALUE);
+            }
+                motor_thrust(m0, 0);
+                motor_thrust(m1, 1);
+                motor_thrust(m2, 2);
+                motor_thrust(m3, 3);
+
         } else {
             motor_thrust(0, 0);
             motor_thrust(0, 1);
@@ -234,7 +233,43 @@ static void vMotor_control(void *pvParametars)
             motor_thrust(0, 3);
         }
 
-        vTaskDelay(20 / portTICK_PERIOD_MS);
+        
+        // uint16_t m0 = pkt.thrust;
+        // uint16_t m1 = pkt.thrust;
+        // uint16_t m2 = pkt.thrust;
+        // uint16_t m3 = pkt.thrust;
+
+        // if (pkt.thrust > 0) {
+
+        //     if (mpu6050_data.gyro_x > MPU6050_GYRO_DEADBAND) {
+        //         m0 = (uint16_t)(m0 * 0.8f);
+        //         m1 = (uint16_t)(m1 * 0.8f);
+        //     } else if (mpu6050_data.gyro_x < -MPU6050_GYRO_DEADBAND) {
+        //         m2 = (uint16_t)(m2 * 0.8f);
+        //         m3 = (uint16_t)(m3 * 0.8f);
+        //     }
+
+        //     if (mpu6050_data.gyro_y > MPU6050_GYRO_DEADBAND) {
+        //         m0 = (uint16_t)(m0 * 0.8f);
+        //         m2 = (uint16_t)(m2 * 0.8f);
+        //     } else if (mpu6050_data.gyro_y < -MPU6050_GYRO_DEADBAND) {
+        //         m1 = (uint16_t)(m1 * 0.8f);
+        //         m3 = (uint16_t)(m3 * 0.8f);
+        //     }
+
+        //     motor_thrust(m0, 0);
+        //     motor_thrust(m1, 1);
+        //     motor_thrust(m2, 2);
+        //     motor_thrust(m3, 3);
+
+        // } else {
+        //     motor_thrust(0, 0);
+        //     motor_thrust(0, 1);
+        //     motor_thrust(0, 2);
+        //     motor_thrust(0, 3);
+        // }
+
+        vTaskDelay(5 / portTICK_PERIOD_MS);
     }
 
     vTaskDelete(NULL);
