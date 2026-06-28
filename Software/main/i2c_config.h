@@ -1,5 +1,5 @@
 #ifndef _I2C_CONFIG_H__
-#define _I2C_CONFIG_H_
+#define _I2C_CONFIG_H__
 
 #include "esp_chip_info.h"
 #include "esp_flash.h"

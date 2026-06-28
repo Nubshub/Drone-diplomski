@@ -1,4 +1,8 @@
-#include "wifi_config.h"
+#include "comm.h"
+
+crtp_packet_t pkt;
+uint8_t rx_buffer[1024];
+int len;
 
 static const char *TAG = "wifi_softAP";
 /**
@@ -80,4 +84,28 @@ void wifi_init(void)
     ESP_LOGI(TAG, "Wi-Fi AP started");
     ESP_LOGI(TAG, "SSID:%s password:%s channel:%d, IP:%s",
              WIFI_SSID, WIFI_PASSWORD, WIFI_CHANEL, "192.168.43.42");
+}
+
+void UDP_server_init(struct sockaddr_in *server_addr, struct sockaddr_in *client_addr, 
+    socklen_t *socklen, int *sock)
+{
+
+    if (*sock < 0) {
+        ESP_LOGE("ESP32_UDP_AP", "Unable to create socket: errno %d", errno);
+        vTaskDelete(NULL);
+        return;
+    }
+
+    (*server_addr).sin_addr.s_addr = htonl(INADDR_ANY);
+    (*server_addr).sin_family = AF_INET;
+    (*server_addr).sin_port = htons(UDP_PORT);
+
+    if (bind(*sock, (struct sockaddr *)server_addr, sizeof((*server_addr))) < 0) {
+        ESP_LOGE("ESP32_UDP_AP", "Socket bind failed: errno %d", errno);
+        close(*sock);
+        vTaskDelete(NULL);
+        return;
+    }
+
+    ESP_LOGI("ESP32_UDP_AP", "UDP server listening on port %d", UDP_PORT);
 }
