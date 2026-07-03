@@ -13,6 +13,35 @@
 #include "control.h"
 #include "soc.h"
 
+PID_t roll_pid = {
+    .kp = 10.0f,
+    .ki = 0.0f,
+    .kd = 2.0f,
+    .integral = 0.0f,
+    .prev_error = 0.0f,
+    .integral_limit = 10.0f,
+    .output_limit = 5000.0f
+};
+
+PID_t pitch_pid = {
+    .kp = 10.0f,
+    .ki = 0.0f,
+    .kd = 2.0f,
+    .integral = 0.0f,
+    .prev_error = 0.0f,
+    .integral_limit = 10.0f,
+    .output_limit = 5000.0f
+};
+
+PID_t yaw_pid = {
+    .kp = 100.0f,
+    .ki = 0.0f,
+    .kd = 2.0f,
+    .integral = 0.0f,
+    .prev_error = 0.0f,
+    .integral_limit = 10.0f,
+    .output_limit = 5000.0f
+};
 
 static void vTask_mpu6050 (void * pvParametars)
 {
@@ -44,47 +73,27 @@ static void vTask_mpu6050 (void * pvParametars)
 
 static void vMotor_control(void *pvParametars)
 {
+    Motor_thrust_t motors;
+
     while(1)
     {
-        uint16_t m0 = pkt.thrust;
-        uint16_t m1 = pkt.thrust;
-        uint16_t m2 = pkt.thrust;
-        uint16_t m3 = pkt.thrust;
-
-        if(pkt.thrust > 0){
-            // If the gyro readings exceed the deadband threshold, calculate errors and adjust motor thrust accordingly
-            if(mpu6050_data.gyro_x > MPU6050_GYRO_DEADBAND || mpu6050_data.gyro_x < -MPU6050_GYRO_DEADBAND ||
-            mpu6050_data.gyro_y > MPU6050_GYRO_DEADBAND || mpu6050_data.gyro_y < -MPU6050_GYRO_DEADBAND ||
-            mpu6050_data.gyro_z > MPU6050_GYRO_DEADBAND || mpu6050_data.gyro_z < -MPU6050_GYRO_DEADBAND) {
-
-                // Calculate errors between desired angles and current gyro readings
-                float pitch_error = pkt.pitch - (float)mpu6050_data.gyro_x / MPU6050_SENSITIVITY_250DPS; 
-                float roll_error = pkt.roll - (float)mpu6050_data.gyro_y / MPU6050_SENSITIVITY_250DPS;
-                float yaw_error = pkt.yaw - (float)mpu6050_data.gyro_z / MPU6050_SENSITIVITY_250DPS; 
-
-                // Calculate adjustments based on proportional gain
-                float roll_adjustment = KP_LEVELING * roll_error;
-                float pitch_adjustment = KP_LEVELING * pitch_error;
-                float yaw_adjustment = KP_LEVELING * yaw_error;
-
-                // Adjust motor thrust based on errors and adjustments
-                m0 += (uint16_t)(roll_adjustment + pitch_adjustment + yaw_adjustment);
-                m1 += (uint16_t)(pkt.thrust + -roll_adjustment + pitch_adjustment - yaw_adjustment);
-                m2 += (uint16_t)(pkt.thrust + roll_adjustment - pitch_adjustment - yaw_adjustment);
-                m3 += (uint16_t)(pkt.thrust + -roll_adjustment - pitch_adjustment + yaw_adjustment);
-
-                // Clamp thrust values to ensure they are within valid range
-                m0 = CLAMP(m0, 0, THURST_VALUE_90);
-                m1 = CLAMP(m1, 0, THURST_VALUE_90);
-                m2 = CLAMP(m2, 0, THURST_VALUE_90);
-                m3 = CLAMP(m3, 0, THURST_VALUE_90);
-            }
-                motor_thrust(m0, MOTOR_FRONT_LEFT);
-                motor_thrust(m1, MOTOR_FRONT_RIGHT);
-                motor_thrust(m2, MOTOR_BACK_LEFT);
-                motor_thrust(m3, MOTOR_BACK_RIGHT);
-
-        } else {
+        if(pkt.thrust > 1)
+        {
+            motors = pid_control(&roll_pid, &pitch_pid, &yaw_pid,
+                                pkt.roll, pkt.pitch, pkt.yaw,
+                                (float)mpu6050_data.gyro_y / MPU6050_SENSITIVITY_250DPS, 
+                                (float)mpu6050_data.gyro_x / MPU6050_SENSITIVITY_250DPS, 
+                                (float)mpu6050_data.gyro_z / MPU6050_SENSITIVITY_250DPS,
+                                pkt.thrust, 
+                                0.005f); // 5ms loop time
+            
+            motor_thrust(motors.m1, MOTOR_FRONT_LEFT);
+            motor_thrust(motors.m2, MOTOR_FRONT_RIGHT);
+            motor_thrust(motors.m3, MOTOR_BACK_LEFT);
+            motor_thrust(motors.m4, MOTOR_BACK_RIGHT);
+        }
+        else
+        {
             motor_thrust(0, MOTOR_FRONT_LEFT);
             motor_thrust(0, MOTOR_FRONT_RIGHT);
             motor_thrust(0, MOTOR_BACK_LEFT);

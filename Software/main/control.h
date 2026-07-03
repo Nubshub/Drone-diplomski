@@ -16,6 +16,32 @@
 #define MOTOR_BACK_LEFT             2
 #define MOTOR_BACK_RIGHT            3
 
+typedef struct {
+    uint16_t m1;
+    uint16_t m2;
+    uint16_t m3;
+    uint16_t m4;
+}Motor_thrust_t;
+
+typedef struct {
+    float kp;
+    float ki;
+    float kd;
+
+    float integral;
+    float prev_error;
+
+    float integral_limit;
+    float output_limit;
+} PID_t;
+
 void motor_thrust(uint16_t thrust, uint8_t motor_index);
+
+Motor_thrust_t pid_control(PID_t *roll_pid, PID_t *pitch_pid, PID_t *yaw_pid,
+                            float target_roll, float target_pitch, float target_yaw,
+                            float current_roll, float current_pitch, float current_yaw,
+                            uint16_t base_thrust, float dt);
+
+float pid_update (PID_t *pid, float target, float current, float dt);
 
 #endif
