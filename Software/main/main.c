@@ -43,28 +43,22 @@ PID_t yaw_pid = {
     .output_limit = 5000.0f
 };
 
-static void vTask_mpu6050 (void * pvParametars)
+static void vMPU6050_data (void * pvParametars)
 {
+    float dt = 0.005;
+    uint8_t reg = MPU6050_REG_ACCEL_XOUT_H;
+    uint8_t buffer[14]; // accel(6) + temp(2) + gyro(6)
+    
     while(1)
     {
-        uint8_t reg = MPU6050_REG_ACCEL_XOUT_H;
-        uint8_t data[14]; // accel(6) + temp(2) + gyro(6)
-
-        ESP_ERROR_CHECK(i2c_master_transmit_receive(mpu6050_handle, &reg, 1, data, sizeof(data), -1));
+        ESP_ERROR_CHECK(i2c_master_transmit_receive(mpu6050_handle, &reg, 1, buffer, sizeof(buffer), -1));
 
         // Parse values (16-bit signed big-endian)
-        mpu6050_data.accel_x  = (int16_t)((data[0] << 8) | data[1]);
-        mpu6050_data.accel_y  = (int16_t)((data[2] << 8) | data[3]);
-        mpu6050_data.accel_z  = (int16_t)((data[4] << 8) | data[5]);
-        mpu6050_data.temp_raw = (int16_t)((data[6] << 8) | data[7]);
-        mpu6050_data.gyro_x  = (int16_t)((data[8] << 8)  | data[9])  - gyro_bias_x;
-        mpu6050_data.gyro_y  = (int16_t)((data[10] << 8) | data[11]) - gyro_bias_y;
-        mpu6050_data.gyro_z  = (int16_t)((data[12] << 8) | data[13]) - gyro_bias_z;
+        parse_mpu6050_data(&mpu6050_raw, buffer);
         
+        // Complementary filter
+        compl_filter(mpu6050_raw, &angles, dt, ALPHA);
 
-        // printf("Accel: X=%d Y=%d Z=%d | Gyro: X=%d Y=%d Z=%d\n",
-        //        mpu6050_data.accel_x, mpu6050_data.accel_y, mpu6050_data.accel_z,
-        //        mpu6050_data.gyro_x, mpu6050_data.gyro_y, mpu6050_data.gyro_z);
         vTaskDelay(5 / portTICK_PERIOD_MS);
     }
 
@@ -77,13 +71,16 @@ static void vMotor_control(void *pvParametars)
 
     while(1)
     {
+        printf("Raw Gyro in degrees/s: X=%.2f, Y=%.2f, Z=%.2f\n", (float)mpu6050_raw.gyro_x / MPU6050_SENSITIVITY_250DPS, (float)mpu6050_raw.gyro_y / MPU6050_SENSITIVITY_250DPS, (float)mpu6050_raw.gyro_z / MPU6050_SENSITIVITY_250DPS);
+        printf("Raw Accel in g: X=%.2f, Y=%.2f, Z=%.2f\n", (float)mpu6050_raw.accel_x / MPU6050_SENSITIVITY_2G, (float)mpu6050_raw.accel_y / MPU6050_SENSITIVITY_2G, (float)mpu6050_raw.accel_z / MPU6050_SENSITIVITY_2G);
+        printf("Current Roll: %.2f, Current Pitch: %.2f, Current Yaw: %.2f\n", angles.roll, angles.pitch, angles.yaw);
         if(pkt.thrust > 1)
         {
             motors = pid_control(&roll_pid, &pitch_pid, &yaw_pid,
                                 pkt.roll, pkt.pitch, pkt.yaw,
-                                (float)mpu6050_data.gyro_y / MPU6050_SENSITIVITY_250DPS, 
-                                (float)mpu6050_data.gyro_x / MPU6050_SENSITIVITY_250DPS, 
-                                (float)mpu6050_data.gyro_z / MPU6050_SENSITIVITY_250DPS,
+                                (float)mpu6050_raw.gyro_y / MPU6050_SENSITIVITY_250DPS, 
+                                (float)mpu6050_raw.gyro_x / MPU6050_SENSITIVITY_250DPS, 
+                                (float)mpu6050_raw.gyro_z / MPU6050_SENSITIVITY_250DPS,
                                 pkt.thrust, 
                                 0.005f); // 5ms loop time
             
@@ -100,7 +97,7 @@ static void vMotor_control(void *pvParametars)
             motor_thrust(0, MOTOR_BACK_RIGHT);
         }
 
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 
     vTaskDelete(NULL);
@@ -145,10 +142,10 @@ void app_main(void)
 
     wifi_init();
 
-    xReturned = xTaskCreate(vTask_mpu6050, "vTask_mpu6050", 4096, NULL, 1, NULL);
+    xReturned = xTaskCreate(vMPU6050_data, "vMPU6050_data", 4096, NULL, 4, NULL);
     if(xReturned != pdPASS)
     {
-        printf("Error: Failed to create vTask_mpu6050 task!\n");
+        printf("Error: Failed to create vMPU6050_data task!\n");
     }
 
     xReturned = xTaskCreate(vUdp_server, "vUdp_server", 4096, NULL, 5, NULL);

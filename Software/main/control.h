@@ -5,10 +5,10 @@
 #include <inttypes.h>
 #include "soc.h"
 
-#define MAX_THURST_VALUE            65535     /*!< Maximum thrust value for motor control is 65535 */
-#define THURST_VALUE_90             58500      /*!< Maximum thrust value to avoid overloading motors */
-#define KP_LEVELING                 20       /*!< Proportional gain for roll/pitch leveling — tune this */
-#define KD_LEVELING                 0.02      /*!< Derivative gain (gyro damping) — tune this */
+#define MAX_THURST_VALUE            65535     /* Maximum thrust value for motor control is 65535 */
+#define THURST_VALUE_90             58500      /* Maximum thrust value to avoid overloading motors */
+#define KP_LEVELING                 20       /* Proportional gain for roll/pitch leveling — tune this */
+#define KD_LEVELING                 0.02      /* Derivative gain (gyro damping) — tune this */
 #define CLAMP(x, lo, hi)            ((x) < (lo) ? (lo) : ((x) > (hi) ? (hi) : (x)))
 
 #define MOTOR_FRONT_LEFT            0

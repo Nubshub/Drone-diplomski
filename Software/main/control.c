@@ -1,4 +1,5 @@
 #include "control.h"
+#include "soc.h"
 
 void motor_thrust(uint16_t thrust, uint8_t motor_index)
 {
