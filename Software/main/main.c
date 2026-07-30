@@ -40,8 +40,12 @@ static void vMotor_control(void *pvParametars)
         local_pkt = pkt;
         taskEXIT_CRITICAL(&pkt_spinlock);
 
-        ESP_ERROR_CHECK(i2c_master_transmit_receive(mpu6050_handle, &reg, 1, buffer, sizeof(buffer), -1));
-
+        esp_err_t err = i2c_master_transmit_receive(mpu6050_handle, &reg, 1, buffer, sizeof(buffer), -1);
+        if (err != ESP_OK)
+        {
+            printf("Failed to read MPU6050\n");
+            continue; // Skip one iteration
+        }
         // Parse values (16-bit signed big-endian)
         parse_mpu6050_data(&mpu6050_raw, buffer);
         
@@ -53,7 +57,7 @@ static void vMotor_control(void *pvParametars)
             motors = pid_control(local_pkt.roll, local_pkt.pitch, local_pkt.yaw,
                                 angles.roll, angles.pitch, angles.yaw,
                                 local_pkt.thrust, 
-                                0.005f); // 5ms loop time
+                                dt); // 5ms loop time
             
             motor_thrust(motors.m1, MOTOR_FRONT_LEFT);
             motor_thrust(motors.m2, MOTOR_FRONT_RIGHT);
