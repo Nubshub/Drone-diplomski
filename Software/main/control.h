@@ -6,6 +6,7 @@
 #include "soc.h"
 
 #define MAX_THURST_VALUE            65535     /* Maximum thrust value for motor control is 65535 */
+#define MIN_THURST_VALUE            1000      /* Minimum thrust value for motor control is 1000 */
 #define THURST_VALUE_90             58500      /* Maximum thrust value to avoid overloading motors */
 #define KP_LEVELING                 20       /* Proportional gain for roll/pitch leveling — tune this */
 #define KD_LEVELING                 0.02      /* Derivative gain (gyro damping) — tune this */
@@ -37,8 +38,7 @@ typedef struct {
 
 void motor_thrust(uint16_t thrust, uint8_t motor_index);
 
-Motor_thrust_t pid_control(PID_t *roll_pid, PID_t *pitch_pid, PID_t *yaw_pid,
-                            float target_roll, float target_pitch, float target_yaw,
+Motor_thrust_t pid_control( float target_roll, float target_pitch, float target_yaw,
                             float current_roll, float current_pitch, float current_yaw,
                             uint16_t base_thrust, float dt);
 

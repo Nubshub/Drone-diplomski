@@ -16,7 +16,7 @@
 #define MPU6050_SENSITIVITY_2G      16384       /* MPU6050 sensitivity at ±2g full scale (LSB/g) */
 #define MPU6050_SENSITIVITY_250DPS  131.0f      /* MPU6050 sensitivity at ±250°/s full scale (LSB/°/s) */
 #define MPU6050_GYRO_DEADBAND       20          /* MPU6050 gyro deadband threshold (LSB) */
-#define MAX_PWM_DUTY_CYCLE          8191        /* Maximum PWM duty cycle for 10-bit resolution */
+#define MAX_PWM_DUTY_CYCLE          8191        /* Maximum PWM duty cycle for 13-bit resolution */
 #define ALPHA                       0.98f       /* Determines the contribution of gyroscope data in the filter */
 
 typedef struct {
@@ -49,6 +49,6 @@ void timer_config(void);
 void configure_mpu6050(void);
 void calibrate_mpu6050(void);
 void parse_mpu6050_data(mpu6050_regs *data, uint8_t raw_data[]);
-void compl_filter(mpu6050_regs mpu6050_raw, angles_data *angles, float dt, int alpha);
+void compl_filter(mpu6050_regs mpu6050_raw, angles_data *angles, float dt, float alpha);
 
 #endif

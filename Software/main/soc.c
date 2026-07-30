@@ -17,7 +17,7 @@ void timer_config(void)
         .speed_mode       = LEDC_HIGH_SPEED_MODE,
         .timer_num        = LEDC_TIMER_0,
         .duty_resolution  = LEDC_TIMER_13_BIT,
-        .freq_hz          = 50,  // Set frequency to 50 kHz for motor control
+        .freq_hz          = 5000,  // Set frequency to 5 kHz for motor control
         .clk_cfg          = LEDC_AUTO_CLK
     };
 
@@ -91,23 +91,16 @@ void configure_mpu6050(void)
 
 void parse_mpu6050_data(mpu6050_regs *data, uint8_t *buffer)
 {
-        uint16_t accel_x  = (int16_t)((buffer[0] << 8) | buffer[1]);
-        uint16_t accel_y  = (int16_t)((buffer[2] << 8) | buffer[3]);
-        uint16_t accel_z  = (int16_t)((buffer[4] << 8) | buffer[5]);
-        uint16_t gyro_x  = (int16_t)((buffer[8] << 8)  | buffer[9])  - gyro_bias_x;
-        uint16_t gyro_y  = (int16_t)((buffer[10] << 8) | buffer[11]) - gyro_bias_y;
-        uint16_t gyro_z  = (int16_t)((buffer[12] << 8) | buffer[13]) - gyro_bias_z;
-
-        data->accel_x  = (int16_t)(accel_x);
-        data->accel_y  = (int16_t)(accel_y);
-        data->accel_z  = (int16_t)(accel_z);
+        data->accel_x  = (int16_t)((buffer[0] << 8) | buffer[1]);
+        data->accel_y  = (int16_t)((buffer[2] << 8) | buffer[3]);
+        data->accel_z  = (int16_t)((buffer[4] << 8) | buffer[5]);
         data->temp_raw = (int16_t)((buffer[6] << 8) | buffer[7]);
-        data->gyro_x  = (int16_t)(gyro_x);
-        data->gyro_y  = (int16_t)(gyro_y);
-        data->gyro_z  = (int16_t)(gyro_z);
+        data->gyro_x  = (int16_t)((buffer[8] << 8)  | buffer[9])  - gyro_bias_x;
+        data->gyro_y  = (int16_t)((buffer[10] << 8) | buffer[11]) - gyro_bias_y;
+        data->gyro_z  = (int16_t)((buffer[12] << 8) | buffer[13]) - gyro_bias_z;
 }
 
-void compl_filter(mpu6050_regs mpu6050_raw, angles_data *angles, float dt, int alpha)
+void compl_filter(mpu6050_regs mpu6050_raw, angles_data *angles, float dt, float alpha)
 {
     // Convert gyro readings to degrees/s
     float gyro_x = (float)mpu6050_raw.gyro_x / MPU6050_SENSITIVITY_250DPS;
@@ -120,12 +113,19 @@ void compl_filter(mpu6050_regs mpu6050_raw, angles_data *angles, float dt, int a
     angles->yaw   += gyro_z * dt;
 
     // Calculate accelerometer angles
-    float accel_roll  = atan2f((float)mpu6050_raw.accel_y, (float)mpu6050_raw.accel_z) * (180.0f / M_PI);
-    float accel_pitch = atan2f(-(float)mpu6050_raw.accel_x, sqrtf((float)mpu6050_raw.accel_y * (float)mpu6050_raw.accel_y + (float)mpu6050_raw.accel_z * (float)mpu6050_raw.accel_z)) * (180.0f / M_PI);
+    float accel_roll = atan2f((float)mpu6050_raw.accel_x,
+                            sqrtf((float)mpu6050_raw.accel_y * mpu6050_raw.accel_y
+                            + (float)mpu6050_raw.accel_z * mpu6050_raw.accel_z))
+                            * (180.0f / M_PI);
+
+    float accel_pitch = atan2f(-(float)mpu6050_raw.accel_y, 
+                            sqrtf((float)mpu6050_raw.accel_x * (float)mpu6050_raw.accel_x 
+                            + (float)mpu6050_raw.accel_z * (float)mpu6050_raw.accel_z)) 
+                            * (180.0f / M_PI);
     
     // Complementary filter
-    angles->roll  = ((alpha * angles->roll) + ((100 - alpha) * accel_roll)) / 100.0f;
-    angles->pitch = ((alpha * angles->pitch) + ((100 - alpha) * accel_pitch)) / 100.0f;
+    angles->roll  = alpha * angles->roll + (1.0f - alpha) * accel_roll;
+    angles->pitch = alpha * angles->pitch + (1.0f - alpha) * accel_pitch;
     angles->yaw   = angles->yaw; // Yaw is not corrected by accelerometer
 
 }
