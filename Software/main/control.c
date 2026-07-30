@@ -80,8 +80,8 @@ Motor_thrust_t pid_control( float target_roll, float target_pitch, float target_
         pid_reset(roll_pid);
         pid_reset(pitch_pid);
         pid_reset(yaw_pid);
-        m.m1 = m.m2 = m.m3 = m.m4 = 0u;
-        return m;
+        motors.m1 = motors.m2 = motors.m3 = motors.m4 = 0u;
+        return motors;
     }
 
     float roll_corr = pid_update(&roll_pid, target_roll, current_roll, dt);
