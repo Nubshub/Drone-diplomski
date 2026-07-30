@@ -33,7 +33,9 @@ PID_t yaw_pid = {
 
 void motor_thrust(uint16_t thrust, uint8_t motor_index)
 {
-    thrust = CLAMP(thrust, MIN_THURST_VALUE, THURST_VALUE_90);
+    if (thrust > 0) {
+        thrust = CLAMP(thrust, MIN_THURST_VALUE, THURST_VALUE_90);
+    }
 
     // Convert thrust to PWM duty cycle (10-bit resolution)
     uint32_t duty = ((uint32_t)thrust * MAX_PWM_DUTY_CYCLE) / THURST_VALUE_90;

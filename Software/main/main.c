@@ -52,7 +52,7 @@ static void vMotor_control(void *pvParametars)
         // Complementary filter
         compl_filter(mpu6050_raw, &angles, dt, ALPHA);
 
-        if(pkt.thrust > 1)
+        if(local_pkt.thrust > 1)
         {
             motors = pid_control(local_pkt.roll, local_pkt.pitch, local_pkt.yaw,
                                 angles.roll, angles.pitch, angles.yaw,
