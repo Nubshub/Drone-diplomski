@@ -33,7 +33,7 @@ PID_t yaw_pid = {
 
 void motor_thrust(uint16_t thrust, uint8_t motor_index)
 {
-    CLAMP(thrust, MIN_THURST_VALUE, THURST_VALUE_90);
+    thrust = CLAMP(thrust, MIN_THURST_VALUE, THURST_VALUE_90);
 
     // Convert thrust to PWM duty cycle (10-bit resolution)
     uint32_t duty = ((uint32_t)thrust * MAX_PWM_DUTY_CYCLE) / THURST_VALUE_90;
@@ -75,9 +75,9 @@ Motor_thrust_t pid_control( float target_roll, float target_pitch, float target_
 
 
     if (base_thrust < MIN_THURST_VALUE) {
-        pid_reset(roll_pid);
-        pid_reset(pitch_pid);
-        pid_reset(yaw_pid);
+        pid_reset(&roll_pid);
+        pid_reset(&pitch_pid);
+        pid_reset(&yaw_pid);
         motors.m1 = motors.m2 = motors.m3 = motors.m4 = 0u;
         return motors;
     }
