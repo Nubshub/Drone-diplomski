@@ -110,7 +110,7 @@ void compl_filter(mpu6050_regs mpu6050_raw, angles_data *angles, float dt, float
     // Integrate gyro data to get angles
     angles->roll  += gyro_y * dt;
     angles->pitch += gyro_x * dt;
-    angles->yaw   += gyro_z * dt;
+    angles->yaw    = gyro_z;
 
     // Calculate accelerometer angles
     float accel_roll = atan2f((float)mpu6050_raw.accel_x,

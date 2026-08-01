@@ -2,9 +2,9 @@
 #include "soc.h"
 
 PID_t roll_pid = {
-    .kp = 200.0f,
-    .ki = 60.0f,
-    .kd = 25.0f,
+    .kp = ROLL_PID_KP,
+    .ki = ROLL_PID_KI,
+    .kd = ROLL_PID_KD,
     .integral = 0.0f,
     .prev_error = 0.0f,
     .integral_limit = 50.0f,
@@ -12,9 +12,9 @@ PID_t roll_pid = {
 };
 
 PID_t pitch_pid = {
-    .kp = 200.0f,
-    .ki = 60.0f,
-    .kd = 25.0f,
+    .kp = PITCH_PID_KP,
+    .ki = PITCH_PID_KI,
+    .kd = PITCH_PID_KD,
     .integral = 0.0f,
     .prev_error = 0.0f,
     .integral_limit = 50.0f,
@@ -22,9 +22,9 @@ PID_t pitch_pid = {
 };
 
 PID_t yaw_pid = {
-    .kp = 300.0f,
-    .ki = 30.0f,
-    .kd = 0.0f,
+    .kp = YAW_PID_KP,
+    .ki = YAW_PID_KI,
+    .kd = YAW_PID_KD,
     .integral = 0.0f,
     .prev_error = 0.0f,
     .integral_limit = 80.0f,
@@ -88,10 +88,10 @@ Motor_thrust_t pid_control( float target_roll, float target_pitch, float target_
     float pitch_corr = pid_update(&pitch_pid, target_pitch, current_pitch, dt);
     float yaw_corr = pid_update(&yaw_pid, target_yaw, current_yaw, dt);
 
-    motors.m1 = CLAMP(base_thrust + roll_corr + pitch_corr - yaw_corr, 0, MAX_THURST_VALUE);
-    motors.m2 = CLAMP(base_thrust - roll_corr + pitch_corr + yaw_corr, 0, MAX_THURST_VALUE);
-    motors.m3 = CLAMP(base_thrust + roll_corr - pitch_corr + yaw_corr, 0, MAX_THURST_VALUE);
-    motors.m4 = CLAMP(base_thrust - roll_corr - pitch_corr - yaw_corr, 0, MAX_THURST_VALUE);
+    motors.m1 = CLAMP(base_thrust - roll_corr - pitch_corr /*+ yaw_corr*/, 0, MAX_THURST_VALUE);
+    motors.m2 = CLAMP(base_thrust + roll_corr - pitch_corr /*- yaw_corr*/, 0, MAX_THURST_VALUE);
+    motors.m3 = CLAMP(base_thrust - roll_corr + pitch_corr /*- yaw_corr*/, 0, MAX_THURST_VALUE);
+    motors.m4 = CLAMP(base_thrust + roll_corr + pitch_corr /*+ yaw_corr*/, 0, MAX_THURST_VALUE);
 
     return motors;
 }

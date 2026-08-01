@@ -13,6 +13,8 @@
 #include "control.h"
 #include "soc.h"
 
+#define DEBUG 0
+
 static portMUX_TYPE pkt_spinlock = portMUX_INITIALIZER_UNLOCKED;
 
 static void vMotor_control(void *pvParametars)
@@ -25,13 +27,6 @@ static void vMotor_control(void *pvParametars)
 
     while(1)
     {
-        // printf("Raw Gyro in degrees/s: X=%.2f, Y=%.2f, Z=%.2f\n", (float)mpu6050_raw.gyro_x / MPU6050_SENSITIVITY_250DPS, 
-        //     (float)mpu6050_raw.gyro_y / MPU6050_SENSITIVITY_250DPS, (float)mpu6050_raw.gyro_z / MPU6050_SENSITIVITY_250DPS);
-
-        // printf("Raw Accel in g: X=%.2f, Y=%.2f, Z=%.2f\n", (float)mpu6050_raw.accel_x / MPU6050_SENSITIVITY_2G, 
-        //     (float)mpu6050_raw.accel_y / MPU6050_SENSITIVITY_2G, (float)mpu6050_raw.accel_z / MPU6050_SENSITIVITY_2G);
-
-        // printf("Current Roll: %.2f, Current Pitch: %.2f, Current Yaw: %.2f\n", angles.roll, angles.pitch, angles.yaw);
         
         // Create a local copy for received packets
         crtp_packet_t local_pkt;
@@ -52,17 +47,34 @@ static void vMotor_control(void *pvParametars)
         // Complementary filter
         compl_filter(mpu6050_raw, &angles, dt, ALPHA);
 
+        #if DEBUG
+
+        static uint32_t dbg_cnt = 0;
+
+        if (++dbg_cnt >= 40) {   // 40 × 5ms = ispis na 200 ms
+            dbg_cnt = 0;
+            printf("Roll: %.2f, Pitch: %.2f, Yaw: %.2f\n",
+                angles.roll, angles.pitch, angles.yaw);
+            printf("Motor Thrust: m1=%d, m2=%d, m3=%d, m4=%d\n",
+                motors.m1, motors.m2, motors.m3, motors.m4);
+        }     
+
+        local_pkt.thrust = 20000; // For testing purposes, set a fixed thrust value
+
+        #endif
+
         if(local_pkt.thrust > 1)
         {
             motors = pid_control(local_pkt.roll, local_pkt.pitch, local_pkt.yaw,
                                 angles.roll, angles.pitch, angles.yaw,
                                 local_pkt.thrust, 
                                 dt); // 5ms loop time
-            
+            #if DEBUG == 0
             motor_thrust(motors.m1, MOTOR_FRONT_LEFT);
             motor_thrust(motors.m2, MOTOR_FRONT_RIGHT);
             motor_thrust(motors.m3, MOTOR_BACK_LEFT);
             motor_thrust(motors.m4, MOTOR_BACK_RIGHT);
+            #endif
         }
         else
         {

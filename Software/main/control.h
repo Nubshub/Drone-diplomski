@@ -17,6 +17,18 @@
 #define MOTOR_BACK_LEFT             2
 #define MOTOR_BACK_RIGHT            3
 
+#define ROLL_PID_KP 100.0f
+#define ROLL_PID_KI 0.0f
+#define ROLL_PID_KD 10.0f
+
+#define PITCH_PID_KP 100.0f
+#define PITCH_PID_KI 0.0f
+#define PITCH_PID_KD 10.0f
+
+#define YAW_PID_KP 500.0f
+#define YAW_PID_KI 0.0f
+#define YAW_PID_KD 50.0f
+
 typedef struct {
     uint16_t m1;
     uint16_t m2;
