@@ -7,17 +7,18 @@
 #include "driver/ledc.h"
 #include "i2c_config.h"
 
-#define MOTOR1_CONTROL_PIN          GPIO_NUM_12 /* GPIO pin for motor 1 control */
-#define MOTOR2_CONTROL_PIN          GPIO_NUM_13 /* GPIO pin for motor 2 control */
-#define MOTOR3_CONTROL_PIN          GPIO_NUM_14 /* GPIO pin for motor 3 control */
-#define MOTOR4_CONTROL_PIN          GPIO_NUM_15 /* GPIO pin for motor 4 controlS */
-#define MPU6050_REG_ACCEL_XOUT_H    0x3B        /* MPU6050 register address of accelerometer X high byte */
-#define GPIO_INPUT_PIN              GPIO_NUM_17 /* GPIO pin for input from MPU6050 sensor*/
-#define MPU6050_SENSITIVITY_2G      16384       /* MPU6050 sensitivity at ±2g full scale (LSB/g) */
-#define MPU6050_SENSITIVITY_250DPS  131.0f      /* MPU6050 sensitivity at ±250°/s full scale (LSB/°/s) */
-#define MPU6050_GYRO_DEADBAND       20          /* MPU6050 gyro deadband threshold (LSB) */
-#define MAX_PWM_DUTY_CYCLE          8191        /* Maximum PWM duty cycle for 13-bit resolution */
-#define ALPHA                       0.98f       /* Determines the contribution of gyroscope data in the filter */
+#define MOTOR1_CONTROL_PIN          GPIO_NUM_12
+#define MOTOR2_CONTROL_PIN          GPIO_NUM_13
+#define MOTOR3_CONTROL_PIN          GPIO_NUM_14
+#define MOTOR4_CONTROL_PIN          GPIO_NUM_15
+#define MPU6050_REG_ACCEL_XOUT_H    0x3B
+#define MPU6050_SENSITIVITY_4G      8192
+#define MPU6050_SENSITIVITY_500DPS  65.5f
+#define MAX_PWM_DUTY_CYCLE          8191
+#define ALPHA                       0.98f
+
+#define GYRO_SIGN_ROLL              (-1.0f)
+#define GYRO_SIGN_PITCH             (-1.0f)
 
 typedef struct {
     int16_t accel_x;
@@ -49,6 +50,10 @@ void timer_config(void);
 void configure_mpu6050(void);
 void calibrate_mpu6050(void);
 void parse_mpu6050_data(mpu6050_regs *data, uint8_t raw_data[]);
-void compl_filter(mpu6050_regs mpu6050_raw, angles_data *angles, float dt, float alpha);
+void compl_filter(const mpu6050_regs *raw, angles_data *angles, float dt, float alpha);
+
+float roll_rate_dps(const mpu6050_regs *r);
+float pitch_rate_dps(const mpu6050_regs *r);
+float yaw_rate_dps(const mpu6050_regs *r);
 
 #endif

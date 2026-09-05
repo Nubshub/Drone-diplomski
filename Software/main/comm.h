@@ -12,11 +12,13 @@
 #define WIFI_SSID       "ESP32_Drone"
 #define WIFI_PASSWORD   "12345678"
 #define WIFI_CHANEL     1
-#define MAX_STA_CONN    1
+#define MAX_STA_CONN    2
 #define UDP_PORT        2390
+#define TELEMETRY_PORT  2391
 
 #define CRTP_PORT_COMMANDER 3
-#define CRTP_DATA_SIZE 31
+#define CRTP_PORT_TUNING    0x0F
+#define CRTP_DATA_SIZE      31
 
 typedef struct __attribute__((packed)) {
     uint8_t channel : 4;
